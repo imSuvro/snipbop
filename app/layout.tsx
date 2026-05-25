@@ -3,8 +3,20 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "SnipBop",
-  description: "A lightweight Next.js and TypeScript app.",
+  description: "Paste an image, choose a format, and export instantly.",
 };
+
+const themeScript = `
+(() => {
+  try {
+    const theme = window.localStorage.getItem("snipbop-theme");
+    if (theme === "light" || theme === "dark") {
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+    }
+  } catch (_) {}
+})();
+`;
 
 export default function RootLayout({
   children,
@@ -12,7 +24,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>{children}</body>
     </html>
   );
