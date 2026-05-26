@@ -13,6 +13,16 @@ function getStoredTheme(): Theme | null {
 }
 
 function getSystemTheme(): Theme {
+  const colorScheme = window.getComputedStyle(document.documentElement).colorScheme;
+
+  if (colorScheme.includes("dark")) {
+    return "dark";
+  }
+
+  if (colorScheme.includes("light")) {
+    return "light";
+  }
+
   return window.matchMedia("(prefers-color-scheme: dark)").matches
     ? "dark"
     : "light";

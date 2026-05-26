@@ -1,4 +1,5 @@
 import type { SVGProps } from "react";
+import { ThemeToggle } from "./theme-toggle";
 import styles from "./page.module.css";
 
 const navLinks = [
@@ -75,13 +76,16 @@ export default function Home() {
           </span>
         </a>
 
-        <nav className={styles.nav} aria-label="Main navigation">
-          {navLinks.map((link) => (
-            <a href={link.href} key={link.label}>
-              {link.label}
-            </a>
-          ))}
-        </nav>
+        <div className={styles.headerActions}>
+          <nav className={styles.nav} aria-label="Main navigation">
+            {navLinks.map((link) => (
+              <a href={link.href} key={link.label}>
+                {link.label}
+              </a>
+            ))}
+          </nav>
+          <ThemeToggle />
+        </div>
       </header>
 
       <section className={styles.hero} aria-labelledby="home-title">
@@ -224,8 +228,8 @@ function LogoMark(props: SVGProps<SVGSVGElement>) {
     <svg viewBox="0 0 48 56" fill="none" {...props}>
       <rect x="7" y="9" width="34" height="40" rx="7" stroke="currentColor" strokeWidth="4" />
       <rect x="17" y="4" width="14" height="9" rx="3" stroke="currentColor" strokeWidth="4" />
-      <path d="M14 39L21 29L28 37L32 32L38 41H14Z" fill="var(--accent)" />
-      <circle cx="31" cy="22" r="4" fill="var(--accent)" />
+      <path d="M14 39L21 29L28 37L32 32L38 41H14Z" fill="var(--color-accent)" />
+      <circle cx="31" cy="22" r="4" fill="var(--color-accent)" />
     </svg>
   );
 }
@@ -235,10 +239,10 @@ function ClipboardImageIcon(props: SVGProps<SVGSVGElement>) {
     <svg viewBox="0 0 120 120" fill="none" {...props}>
       <rect x="34" y="34" width="52" height="58" rx="10" stroke="currentColor" strokeWidth="8" />
       <rect x="49" y="24" width="22" height="15" rx="5" fill="currentColor" />
-      <path d="M42 79L54 63L66 78L72 71L83 86H42Z" fill="var(--accent)" />
-      <circle cx="57" cy="53" r="5" fill="var(--accent)" />
-      <path d="M90 31L101 20" stroke="var(--accent)" strokeWidth="5" strokeLinecap="round" />
-      <path d="M95 42H108" stroke="var(--accent)" strokeWidth="5" strokeLinecap="round" />
+      <path d="M42 79L54 63L66 78L72 71L83 86H42Z" fill="var(--color-accent)" />
+      <circle cx="57" cy="53" r="5" fill="var(--color-accent)" />
+      <path d="M90 31L101 20" stroke="var(--color-accent)" strokeWidth="5" strokeLinecap="round" />
+      <path d="M95 42H108" stroke="var(--color-accent)" strokeWidth="5" strokeLinecap="round" />
     </svg>
   );
 }

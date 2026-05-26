@@ -68,6 +68,14 @@
   color: var(--color-accent);
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
 .nav {
   display: flex;
   align-items: center;
@@ -461,6 +469,13 @@
     align-items: flex-start;
     flex-direction: column;
     gap: 18px;
+  }
+
+  .headerActions {
+    width: 100%;
+    align-items: flex-start;
+    flex-direction: column-reverse;
+    gap: var(--space-4);
   }
 
   .nav {
