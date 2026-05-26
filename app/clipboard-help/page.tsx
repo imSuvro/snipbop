@@ -1,8 +1,23 @@
 import type { Metadata } from "next";
+import type { SVGProps } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "../theme-toggle";
 import { DeviceHelpTabs } from "./device-help-tabs";
 import styles from "./page.module.css";
+
+const quickTips = [
+  "Copy the image itself, not just the page address.",
+  "Click or tap the SnipBop paste area before pasting.",
+  "Allow clipboard access if your browser asks.",
+  "Use Choose Image when an app does not offer paste.",
+];
+
+const checklist = [
+  "Copy an image",
+  "Focus the paste area",
+  "Paste or choose a file",
+  "Export from SnipBop",
+];
 
 const faqs = [
   {
@@ -66,9 +81,7 @@ export default function ClipboardHelpPage() {
 
       <header className={styles.header}>
         <Link className={styles.brand} href="/" aria-label="Go to SnipBop">
-          <span className={styles.logoMark} aria-hidden="true">
-            SB
-          </span>
+          <LogoMark className={styles.logoMark} aria-hidden="true" />
           <span className={styles.wordmark}>
             Snip<span>Bop</span>
           </span>
@@ -88,21 +101,25 @@ export default function ClipboardHelpPage() {
         <div className={styles.heroCopy}>
           <p className={styles.eyebrow}>Clipboard help</p>
           <h1 id="clipboard-help-title">
-            How to copy and paste images into SnipBop.
+            Paste images into SnipBop on any device.
           </h1>
           <p>
-            Pick your device, follow the short steps, then return to the main
-            image tool to export your file.
+            Choose your device for simple, text-only steps. When paste is not
+            available, SnipBop still lets you pick an image file and export it
+            locally.
           </p>
         </div>
 
-        <div className={styles.heroActions} aria-label="Primary actions">
+        <div className={styles.heroPanel} aria-label="Clipboard paste checklist">
+          <p className={styles.panelKicker}>Start here</p>
+          <ol>
+            {checklist.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ol>
           <Link className={styles.primaryLink} href="/">
-            Open the main tool
+            Open main tool
           </Link>
-          <a className={styles.secondaryLink} href="#device-instructions">
-            Choose your device
-          </a>
         </div>
       </section>
 
@@ -111,13 +128,12 @@ export default function ClipboardHelpPage() {
       <section className={styles.quickTips} aria-labelledby="quick-tips-title">
         <div className={styles.sectionIntro}>
           <p className={styles.eyebrow}>Quick tips</p>
-          <h2 id="quick-tips-title">Make clipboard paste work smoothly.</h2>
+          <h2 id="quick-tips-title">Make image paste feel predictable.</h2>
         </div>
         <ul>
-          <li>Copy the image itself, not just the page address.</li>
-          <li>Click or tap the SnipBop paste area before pasting.</li>
-          <li>Allow clipboard access if your browser asks.</li>
-          <li>Use Choose Image when a browser or app does not offer paste.</li>
+          {quickTips.map((tip) => (
+            <li key={tip}>{tip}</li>
+          ))}
         </ul>
       </section>
 
@@ -145,5 +161,35 @@ export default function ClipboardHelpPage() {
         <Link href="/">Back to the main SnipBop tool</Link>
       </footer>
     </main>
+  );
+}
+
+function LogoMark(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 48 56" fill="none" {...props}>
+      <rect
+        x="7"
+        y="9"
+        width="34"
+        height="40"
+        rx="7"
+        stroke="currentColor"
+        strokeWidth="4"
+      />
+      <rect
+        x="17"
+        y="4"
+        width="14"
+        height="9"
+        rx="3"
+        stroke="currentColor"
+        strokeWidth="4"
+      />
+      <path
+        d="M14 39L21 29L28 37L32 32L38 41H14Z"
+        fill="var(--color-accent)"
+      />
+      <circle cx="31" cy="22" r="4" fill="var(--color-accent)" />
+    </svg>
   );
 }

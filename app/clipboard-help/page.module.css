@@ -2,7 +2,7 @@
   min-height: 100vh;
   color: var(--color-text);
   background:
-    linear-gradient(180deg, rgba(12, 28, 43, 0.98) 0%, var(--color-page) 42%),
+    linear-gradient(180deg, rgba(12, 28, 43, 0.98) 0%, var(--color-page) 38%),
     var(--color-page);
 }
 
@@ -45,17 +45,10 @@
 }
 
 .logoMark {
-  display: inline-grid;
-  place-items: center;
   width: 38px;
-  height: 38px;
-  border: 2px solid currentColor;
-  border-radius: var(--radius-xs);
-  color: var(--color-accent);
-  font-size: 0.78rem;
-  font-weight: 900;
-  line-height: 1;
-  box-shadow: 0 8px 16px rgba(11, 183, 173, 0.18);
+  height: 44px;
+  color: var(--color-text);
+  filter: drop-shadow(0 8px 16px rgba(11, 183, 173, 0.18));
 }
 
 .wordmark {
@@ -110,21 +103,22 @@
 
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(290px, 0.42fr);
   gap: var(--space-7);
   align-items: end;
-  padding-top: 88px;
-  padding-bottom: 60px;
+  padding-top: 74px;
+  padding-bottom: 40px;
 }
 
 .heroCopy {
   display: grid;
   gap: var(--space-4);
-  max-width: 760px;
+  max-width: 780px;
 }
 
 .eyebrow,
-.panelEyebrow {
+.panelEyebrow,
+.panelKicker {
   color: var(--color-accent);
   font-size: 0.78rem;
   font-weight: 800;
@@ -133,9 +127,10 @@
 }
 
 .hero h1 {
+  max-width: 780px;
   color: var(--color-text);
-  font-size: 4.35rem;
-  line-height: 1.04;
+  font-size: 4.05rem;
+  line-height: 1.06;
   letter-spacing: 0;
 }
 
@@ -145,22 +140,47 @@
   text-wrap: balance;
 }
 
-.heroCopy > p:last-child {
-  max-width: 650px;
+.heroCopy > p:last-child,
+.sectionIntro p,
+.panelIntro,
+.fallback p,
+.faqItem p,
+.quickTips li,
+.footer p,
+.heroPanel li {
   color: var(--color-muted);
+  line-height: 1.65;
+}
+
+.heroCopy > p:last-child {
+  max-width: 670px;
   font-size: 1.12rem;
-  line-height: 1.7;
 }
 
-.heroActions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: var(--space-3);
+.heroPanel {
+  display: grid;
+  gap: var(--space-4);
+  padding: 22px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xs);
+  background:
+    linear-gradient(135deg, rgba(11, 183, 173, 0.08), transparent 58%),
+    var(--color-surface);
+  box-shadow: var(--shadow-card);
 }
 
-.primaryLink,
-.secondaryLink {
+.heroPanel ol {
+  display: grid;
+  gap: 10px;
+  padding-left: 1.2rem;
+  font-weight: 800;
+}
+
+.heroPanel li::marker {
+  color: var(--color-accent);
+}
+
+.primaryLink {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -168,43 +188,32 @@
   padding: 0 18px;
   border: 1px solid transparent;
   border-radius: var(--radius-xs);
+  color: var(--color-white);
+  background: linear-gradient(180deg, var(--color-teal-400), var(--color-teal-600));
   font-weight: 800;
   text-align: center;
+  box-shadow: 0 18px 40px rgba(7, 155, 148, 0.22);
   transition:
-    border-color 160ms ease,
     box-shadow 160ms ease,
     transform 160ms ease;
 }
 
-.primaryLink {
-  color: var(--color-white);
-  background: linear-gradient(180deg, var(--color-teal-400), var(--color-teal-600));
-  box-shadow: 0 18px 40px rgba(7, 155, 148, 0.22);
-}
-
-.secondaryLink {
-  border-color: var(--color-border);
-  color: var(--color-text);
-  background: var(--color-control);
-  box-shadow: var(--shadow-control);
-}
-
-.primaryLink:hover,
-.secondaryLink:hover {
+.primaryLink:hover {
   transform: translateY(-1px);
+  box-shadow: 0 20px 44px rgba(7, 155, 148, 0.28);
 }
 
 .deviceSection,
 .quickTips,
 .faqSection {
-  padding-top: 58px;
-  padding-bottom: 58px;
+  padding-top: 52px;
+  padding-bottom: 52px;
 }
 
 .sectionIntro {
   display: grid;
   gap: var(--space-3);
-  max-width: 650px;
+  max-width: 700px;
 }
 
 .sectionIntro h2 {
@@ -216,25 +225,31 @@
 
 .deviceGuide {
   display: grid;
+  grid-template-columns: 238px minmax(0, 1fr);
   gap: var(--space-4);
   margin-top: 26px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xs);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
 }
 
 .tabs {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-content: start;
   gap: 8px;
+  min-width: 0;
   padding: 8px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xs);
-  background: var(--color-control);
-  box-shadow: var(--shadow-control);
+  border-right: 1px solid var(--color-border);
 }
 
 .tabButton {
+  display: grid;
+  gap: 3px;
   min-width: 0;
-  min-height: 46px;
-  padding: 0 12px;
+  min-height: 58px;
+  padding: 10px 12px;
   border: 1px solid transparent;
   border-radius: var(--radius-xs);
   color: var(--color-muted);
@@ -242,6 +257,7 @@
   font: inherit;
   font-weight: 800;
   cursor: pointer;
+  text-align: left;
   transition:
     background 160ms ease,
     border-color 160ms ease,
@@ -249,9 +265,15 @@
     transform 160ms ease;
 }
 
+.tabButton small {
+  color: var(--color-subtle);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
 .tabButton:hover {
   color: var(--color-text);
-  transform: translateY(-1px);
+  transform: translateX(2px);
 }
 
 .tabButton[data-active="true"] {
@@ -261,63 +283,130 @@
   box-shadow: var(--shadow-inset);
 }
 
+.tabButton[data-active="true"] small {
+  color: var(--color-accent);
+}
+
 .tabButton:focus-visible,
 .primaryLink:focus-visible,
-.secondaryLink:focus-visible,
 .topNav a:focus-visible,
 .footer a:focus-visible,
-.brand:focus-visible {
+.brand:focus-visible,
+.fallback a:focus-visible {
   outline: 0;
   box-shadow: 0 0 0 4px var(--color-focus);
 }
 
 .panel {
   display: grid;
-  gap: var(--space-4);
-  padding: 28px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xs);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
+  gap: var(--space-5);
+  min-width: 0;
+  padding: 26px;
 }
 
 .panel[hidden] {
   display: none;
 }
 
+.panelHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, auto);
+  gap: var(--space-5);
+  align-items: start;
+  min-width: 0;
+}
+
 .panel h3 {
+  margin-top: var(--space-2);
   color: var(--color-text);
   font-size: 2rem;
   line-height: 1.15;
   letter-spacing: 0;
 }
 
-.panelIntro,
-.fallback,
-.faqItem p,
-.quickTips li,
-.footer p {
-  color: var(--color-muted);
-  line-height: 1.65;
+.panelIntro {
+  margin-top: var(--space-3);
+}
+
+.pasteAction {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(79, 139, 216, 0.32);
+  border-radius: var(--radius-xs);
+  background: rgba(79, 139, 216, 0.1);
+}
+
+.pasteAction span,
+.fallback span {
+  color: var(--color-subtle);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.pasteAction strong {
+  color: var(--color-sky-500);
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+
+.panelBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.4fr);
+  gap: var(--space-5);
+  align-items: start;
 }
 
 .stepList {
   display: grid;
-  gap: var(--space-3);
-  padding-left: 1.3rem;
-  color: var(--color-text);
-  font-weight: 700;
+  gap: 12px;
+  min-width: 0;
+  list-style: none;
 }
 
-.stepList li::marker {
+.stepList li {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+  min-width: 0;
+}
+
+.stepList span {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--color-border-accent);
+  border-radius: 999px;
   color: var(--color-accent);
+  background: rgba(11, 183, 173, 0.1);
+  font-size: 0.78rem;
   font-weight: 900;
 }
 
+.stepList p {
+  min-width: 0;
+  padding-top: 4px;
+  color: var(--color-text);
+  font-weight: 750;
+  line-height: 1.55;
+}
+
 .fallback {
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--color-border);
-  font-weight: 700;
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: 18px 0 18px var(--space-5);
+  border-left: 1px solid rgba(244, 189, 119, 0.44);
+}
+
+.fallback a {
+  justify-self: start;
+  color: var(--color-accent);
+  font-weight: 900;
 }
 
 .quickTips {
@@ -330,7 +419,8 @@
 
 .quickTips ul {
   display: grid;
-  gap: var(--space-3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px var(--space-5);
   padding-left: 1.15rem;
 }
 
@@ -406,19 +496,19 @@
 
 :global(html[data-theme="light"]) .page {
   background:
-    linear-gradient(180deg, #fbfcf8 0%, var(--color-page) 42%),
+    linear-gradient(180deg, #fbfcf8 0%, var(--color-page) 38%),
     var(--color-page);
 }
 
 @media (prefers-color-scheme: light) {
   :global(html:not([data-theme])) .page {
     background:
-      linear-gradient(180deg, #fbfcf8 0%, var(--color-page) 42%),
+      linear-gradient(180deg, #fbfcf8 0%, var(--color-page) 38%),
       var(--color-page);
   }
 }
 
-@media (max-width: 920px) {
+@media (max-width: 980px) {
   .header {
     position: static;
     align-items: flex-start;
@@ -454,12 +544,26 @@
     padding-top: 50px;
   }
 
-  .heroActions {
-    justify-content: flex-start;
+  .heroPanel {
+    max-width: 560px;
+  }
+
+  .deviceGuide {
+    grid-template-columns: 1fr;
   }
 
   .tabs {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-right: 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .tabButton {
+    text-align: center;
+  }
+
+  .tabButton:hover {
+    transform: translateY(-1px);
   }
 
   .quickTips,
@@ -468,13 +572,18 @@
   }
 }
 
-@media (max-width: 680px) {
+@media (max-width: 720px) {
   .header {
     padding: 18px;
   }
 
   .wordmark {
     font-size: 1.35rem;
+  }
+
+  .logoMark {
+    width: 34px;
+    height: 40px;
   }
 
   .hero,
@@ -487,16 +596,14 @@
 
   .hero {
     padding-top: 42px;
-    padding-bottom: 42px;
+    padding-bottom: 36px;
   }
 
   .hero h1 {
     font-size: 2.42rem;
   }
 
-  .heroActions,
-  .primaryLink,
-  .secondaryLink {
+  .primaryLink {
     width: 100%;
   }
 
@@ -504,13 +611,33 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .deviceGuide {
+    padding: 8px;
+  }
+
   .panel {
-    padding: 20px;
+    padding: 18px 12px 14px;
+  }
+
+  .panelHeader,
+  .panelBody,
+  .quickTips ul {
+    grid-template-columns: 1fr;
   }
 
   .panel h3,
   .sectionIntro h2 {
     font-size: 1.82rem;
+  }
+
+  .pasteAction {
+    max-width: 100%;
+  }
+
+  .fallback {
+    padding: var(--space-4) 0 0;
+    border-top: 1px solid rgba(244, 189, 119, 0.44);
+    border-left: 0;
   }
 
   .footer {
@@ -521,8 +648,16 @@
 
 @media (max-width: 420px) {
   .tabButton {
-    min-height: 44px;
+    min-height: 54px;
     padding-inline: 8px;
     font-size: 0.9rem;
+  }
+
+  .tabButton small {
+    font-size: 0.72rem;
+  }
+
+  .stepList li {
+    grid-template-columns: 34px minmax(0, 1fr);
   }
 }
