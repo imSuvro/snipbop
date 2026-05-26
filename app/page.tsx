@@ -1,14 +1,20 @@
 import type { SVGProps } from "react";
 import Link from "next/link";
 import { ClipboardImageTool } from "./clipboard-image-tool";
+import { getFeedbackMailto } from "./feedback";
 import { ThemeToggle } from "./theme-toggle";
 import styles from "./page.module.css";
 
-const navLinks = [
+type NavigationLink = {
+  label: string;
+  href: string;
+  id?: string;
+};
+
+const navLinks: NavigationLink[] = [
   { label: "How it works", href: "#how-it-works" },
   { label: "Clipboard help", href: "/clipboard-help" },
-  { label: "Privacy", href: "#privacy" },
-  { label: "Feedback", href: "mailto:feedback@snipbop.app" },
+  { label: "Privacy", href: "/privacy" },
 ];
 
 const trustBadges = [
@@ -58,19 +64,25 @@ const faqs = [
   },
 ];
 
-const footerLinks = [
+const footerLinks: NavigationLink[] = [
   { label: "Product", href: "#top" },
   { label: "Resources", href: "#how-it-works" },
-  { label: "Support", href: "mailto:support@snipbop.app" },
-  { label: "Privacy", href: "#privacy", id: "privacy" },
-  { label: "Terms", href: "#terms", id: "terms" },
-  { label: "Contact", href: "mailto:hello@snipbop.app" },
+  { label: "Clipboard help", href: "/clipboard-help" },
+  { label: "Privacy", href: "/privacy", id: "privacy" },
+  { label: "Terms", href: "/terms", id: "terms" },
 ];
 
 /**
  * Renders the static SnipBop main page shell for the first paste/export flow.
  */
 export default function Home() {
+  const feedbackHref = getFeedbackMailto();
+  const mainNavLinks = [...navLinks, { label: "Feedback", href: feedbackHref }];
+  const siteFooterLinks = [
+    ...footerLinks,
+    { label: "Feedback", href: feedbackHref },
+  ];
+
   return (
     <main className={styles.page} id="top">
       <header className={styles.header}>
@@ -83,16 +95,8 @@ export default function Home() {
 
         <div className={styles.headerActions}>
           <nav className={styles.nav} aria-label="Main navigation">
-            {navLinks.map((link) => (
-              link.href.startsWith("/") ? (
-                <Link href={link.href} key={link.label}>
-                  {link.label}
-                </Link>
-              ) : (
-                <a href={link.href} key={link.label}>
-                  {link.label}
-                </a>
-              )
+            {mainNavLinks.map((link) => (
+              <NavigationLinkItem link={link} key={link.label} />
             ))}
           </nav>
           <ThemeToggle />
@@ -203,14 +207,28 @@ export default function Home() {
         </div>
 
         <nav className={styles.footerLinks} aria-label="Footer navigation">
-          {footerLinks.map((link) => (
-            <a href={link.href} id={link.id} key={link.label}>
-              {link.label}
-            </a>
+          {siteFooterLinks.map((link) => (
+            <NavigationLinkItem link={link} key={link.label} />
           ))}
         </nav>
       </footer>
     </main>
+  );
+}
+
+function NavigationLinkItem({ link }: { link: NavigationLink }) {
+  if (link.href.startsWith("/")) {
+    return (
+      <Link href={link.href} id={link.id}>
+        {link.label}
+      </Link>
+    );
+  }
+
+  return (
+    <a href={link.href} id={link.id}>
+      {link.label}
+    </a>
   );
 }
 
