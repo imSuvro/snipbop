@@ -1,231 +1,328 @@
-import Image from "next/image";
+import type { SVGProps } from "react";
 import { ThemeToggle } from "./theme-toggle";
 import styles from "./page.module.css";
 
+const navLinks = [
+  { label: "How it works", href: "#how-it-works" },
+  { label: "Clipboard help", href: "#clipboard-help" },
+  { label: "Privacy", href: "#privacy" },
+  { label: "Feedback", href: "mailto:feedback@snipbop.app" },
+];
+
+const trustBadges = [
+  { label: "Runs in your browser", icon: ShieldIcon },
+  { label: "No sign in", icon: UserIcon },
+  { label: "No upload needed", icon: CloudIcon },
+];
+
+const steps = [
+  {
+    number: "01",
+    title: "Add your image",
+    text: "Choose a file, drop one in, or use the clipboard when your browser allows it.",
+  },
+  {
+    number: "02",
+    title: "Pick the output",
+    text: "Name the file and choose the image format you want to save next.",
+  },
+  {
+    number: "03",
+    title: "Export locally",
+    text: "Download from the browser. The image does not need an account or a server trip.",
+  },
+];
+
+const faqs = [
+  {
+    question: "Does SnipBop upload my image?",
+    answer:
+      "No. This first shell is designed around local, browser-based image handling.",
+  },
+  {
+    question: "Will clipboard paste work everywhere?",
+    answer:
+      "Clipboard access depends on browser support and device permissions, especially on mobile.",
+  },
+  {
+    question: "Do I need to create an account?",
+    answer:
+      "No sign in is planned for the core image paste and export workflow.",
+  },
+  {
+    question: "Which formats will SnipBop support?",
+    answer:
+      "The intended export choices are PNG, JPG, WebP, and SVG once export logic is added.",
+  },
+];
+
+const footerLinks = [
+  { label: "Product", href: "#top" },
+  { label: "Resources", href: "#how-it-works" },
+  { label: "Support", href: "mailto:support@snipbop.app" },
+  { label: "Privacy", href: "#privacy", id: "privacy" },
+  { label: "Terms", href: "#terms", id: "terms" },
+  { label: "Contact", href: "mailto:hello@snipbop.app" },
+];
+
+/**
+ * Renders the static SnipBop main page shell for the first paste/export flow.
+ */
 export default function Home() {
   return (
-    <main className={styles.page}>
-      <div className={styles.shell}>
-        <header className={styles.header}>
-          <Logo />
-          <nav className={styles.nav} aria-label="Primary navigation">
-            <a href="#workspace">How it works</a>
-            <a href="#about">About</a>
+    <main className={styles.page} id="top">
+      <header className={styles.header}>
+        <a className={styles.brand} href="#top" aria-label="SnipBop home">
+          <LogoMark className={styles.logoMark} />
+          <span className={styles.wordmark}>
+            Snip<span>Bop</span>
+          </span>
+        </a>
+
+        <div className={styles.headerActions}>
+          <nav className={styles.nav} aria-label="Main navigation">
+            {navLinks.map((link) => (
+              <a href={link.href} key={link.label}>
+                {link.label}
+              </a>
+            ))}
           </nav>
           <ThemeToggle />
-        </header>
+        </div>
+      </header>
 
-        <section
-          id="workspace"
-          className={styles.workspace}
-          aria-label="SnipBop upload and export workspace"
-        >
-          <section className={styles.uploadPanel} aria-labelledby="upload-title">
-            <div className={styles.intro}>
-              <h1 id="upload-title">
-                <span className={styles.headlineMain}>Paste an image.</span>
-                <span>Export instantly.</span>
-              </h1>
-              <p>
-                SnipBop lets you paste an image, choose a format, name it, and
-                download in a snap.
-              </p>
-              <ul className={styles.featureStack} aria-label="Privacy promises">
-                <Feature icon={<ShieldIcon />} label="Runs in your browser" />
-                <Feature icon={<PersonIcon />} label="No sign in required" />
-                <Feature icon={<CloudIcon />} label="No upload needed" />
-              </ul>
-            </div>
+      <section className={styles.hero} aria-labelledby="home-title">
+        <div className={styles.heroCopy}>
+          <p className={styles.eyebrow}>Fast browser image export</p>
+          <h1 id="home-title" className={styles.title}>
+            <span className={styles.desktopTitle}>
+              <span className={styles.titleLine}>Paste an image.</span>
+              <span className={styles.titleLine}>
+                Export <span className={styles.accentText}>instantly.</span>
+              </span>
+            </span>
+            <span className={styles.mobileTitle}>
+              <span className={styles.titleLine}>Add your image.</span>
+              <span className={styles.titleLine}>
+                Export <span className={styles.accentText}>instantly.</span>
+              </span>
+            </span>
+          </h1>
+          <p className={styles.lede}>
+            Save screenshots, copied images, and photos as clean downloadable
+            files right from your browser.
+          </p>
 
-            <div className={styles.dropZone}>
-              <LogoMark className={styles.dropMark} />
-              <div>
-                <h2>Paste an image or drop it here</h2>
-                <p>Press Ctrl + V or Cmd + V</p>
-              </div>
-              <button className={styles.secondaryButton} type="button">
-                <FolderIcon />
-                Choose file
-              </button>
-            </div>
-          </section>
-
-          <section className={styles.exportPanel} aria-labelledby="export-title">
-            <div className={styles.exportSettings}>
-              <div className={styles.readyHeader}>
-                <CheckIcon />
-                <div>
-                  <h2 id="export-title">
-                    Your image is <span>ready!</span>
-                  </h2>
-                  <p>Choose a format, name your file, and export it instantly.</p>
-                </div>
-              </div>
-
-              <div className={styles.fieldGroup}>
-                <p className={styles.label}>Output format</p>
-                <div className={styles.formatGrid} aria-label="Output format">
-                  {["PNG", "JPG", "WebP", "SVG"].map((format) => (
-                    <button
-                      key={format}
-                      className={`${styles.formatButton} ${
-                        format === "PNG" ? styles.formatButtonActive : ""
-                      }`}
-                      type="button"
-                      aria-pressed={format === "PNG"}
-                    >
-                      {format}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className={styles.fieldGroup}>
-                <p className={styles.label}>File name</p>
-                <div className={styles.fileNameField}>
-                  <span>screenshot</span>
-                  <span>.png</span>
-                </div>
-              </div>
-
-              <button className={styles.primaryButton} type="button">
-                <DownloadIcon />
-                Export Image
-              </button>
-
-              <p className={styles.note}>
-                <LockIcon />
-                Your image never leaves your browser.
-              </p>
-            </div>
-
-            <figure className={styles.previewCard}>
-              <Image
-                src="/snipbop-preview.png"
-                alt="Mountain lake image preview"
-                width={736}
-                height={472}
-                priority
-              />
-              <figcaption>
-                <span>1280 x 853</span>
-                <span>1.2 MB</span>
-                <button type="button">Preview</button>
-              </figcaption>
-            </figure>
-          </section>
-        </section>
-
-        <footer id="about" className={styles.footer}>
-          <div>
-            <Logo compact />
-            <p>The fastest way to save images from your clipboard.</p>
+          <div className={styles.trustList} aria-label="SnipBop trust signals">
+            {trustBadges.map(({ label, icon: Icon }) => (
+              <span className={styles.trustBadge} key={label}>
+                <Icon aria-hidden="true" />
+                {label}
+              </span>
+            ))}
           </div>
-          <nav aria-label="Footer navigation">
-            <a href="#workspace">How it works</a>
-            <a href="#about">Privacy</a>
-            <a href="#about">Terms</a>
-            <a href="#about">Contact</a>
-          </nav>
-          <p className={styles.copyright}>&copy; 2026 snipbop</p>
-        </footer>
-      </div>
+        </div>
+
+        <section className={styles.tool} aria-labelledby="upload-title">
+          <div className={styles.dropZone}>
+            <ClipboardImageIcon className={styles.uploadIcon} aria-hidden="true" />
+            <div>
+              <h2 id="upload-title">Add your image</h2>
+              <p>Paste an image, choose a file, or drop one here.</p>
+            </div>
+
+            <div className={styles.actions}>
+              <button className={styles.primaryButton} type="button">
+                <ImageIcon aria-hidden="true" />
+                Choose Image
+              </button>
+              <button className={styles.secondaryButton} type="button">
+                <ClipboardIcon aria-hidden="true" />
+                Paste from Clipboard
+              </button>
+            </div>
+          </div>
+
+          <p className={styles.lockNote}>
+            <LockIcon aria-hidden="true" />
+            Your image stays on your device until you export.
+          </p>
+        </section>
+      </section>
+
+      <section
+        className={`${styles.section} ${styles.howItWorks}`}
+        id="how-it-works"
+        aria-labelledby="how-title"
+      >
+        <div className={styles.sectionIntro}>
+          <p className={styles.eyebrow}>How it works</p>
+          <h2 id="how-title">Three steps from image to file.</h2>
+        </div>
+        <div className={styles.stepGrid}>
+          {steps.map((step) => (
+            <article className={styles.step} key={step.number}>
+              <span>{step.number}</span>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section
+        className={`${styles.section} ${styles.clipboardHelp}`}
+        id="clipboard-help"
+        aria-labelledby="clipboard-title"
+      >
+        <div>
+          <p className={styles.eyebrow}>Clipboard help</p>
+          <h2 id="clipboard-title">Paste support depends on the browser.</h2>
+        </div>
+        <p>
+          Desktop browsers usually allow paste after keyboard input. Mobile
+          browsers may ask for permission or require choosing an image instead.
+        </p>
+      </section>
+
+      <section
+        className={`${styles.section} ${styles.faqSection}`}
+        aria-labelledby="faq-title"
+      >
+        <div className={styles.sectionIntro}>
+          <p className={styles.eyebrow}>FAQ</p>
+          <h2 id="faq-title">Quick answers before exporting.</h2>
+        </div>
+        <div className={styles.faqList}>
+          {faqs.map((faq) => (
+            <details className={styles.faqItem} key={faq.question}>
+              <summary>{faq.question}</summary>
+              <p>{faq.answer}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <footer className={styles.footer}>
+        <div className={styles.footerBrand}>
+          <a className={styles.brand} href="#top" aria-label="SnipBop home">
+            <LogoMark className={styles.logoMark} />
+            <span className={styles.wordmark}>
+              Snip<span>Bop</span>
+            </span>
+          </a>
+          <p>The fastest way to turn a copied image into a clean download.</p>
+        </div>
+
+        <nav className={styles.footerLinks} aria-label="Footer navigation">
+          {footerLinks.map((link) => (
+            <a href={link.href} id={link.id} key={link.label}>
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      </footer>
     </main>
   );
 }
 
-function Logo({ compact = false }: { compact?: boolean }) {
+/**
+ * Draws the SnipBop clipboard/image logo mark.
+ */
+function LogoMark(props: SVGProps<SVGSVGElement>) {
   return (
-    <a className={compact ? styles.logoCompact : styles.logo} href="#">
-      <LogoMark className={styles.logoMark} />
-      <span>
-        Snip<span>Bop</span>
-      </span>
-    </a>
-  );
-}
-
-function LogoMark({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 64 64" aria-hidden="true">
-      <rect className={styles.markBoard} x="15" y="14" width="34" height="42" rx="8" />
-      <path className={styles.markClip} d="M25 15h2.8a4.2 4.2 0 0 1 8.4 0H39a4 4 0 0 1 4 4v3H21v-3a4 4 0 0 1 4-4Z" />
-      <circle className={styles.markAccent} cx="38" cy="30" r="3.8" />
-      <path className={styles.markAccent} d="M20.5 48.5 29 38l6.3 6.8 4.2-4.7 8 8.4H20.5Z" />
+    <svg viewBox="0 0 48 56" fill="none" {...props}>
+      <rect x="7" y="9" width="34" height="40" rx="7" stroke="currentColor" strokeWidth="4" />
+      <rect x="17" y="4" width="14" height="9" rx="3" stroke="currentColor" strokeWidth="4" />
+      <path d="M14 39L21 29L28 37L32 32L38 41H14Z" fill="var(--color-accent)" />
+      <circle cx="31" cy="22" r="4" fill="var(--color-accent)" />
     </svg>
   );
 }
 
-function Feature({ icon, label }: { icon: React.ReactNode; label: string }) {
+/**
+ * Draws the empty-state upload illustration used inside the drop zone.
+ */
+function ClipboardImageIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <li>
-      <span>{icon}</span>
-      {label}
-    </li>
-  );
-}
-
-function ShieldIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 3.5 19 6v5.4c0 4.5-2.9 7.5-7 9.1-4.1-1.6-7-4.6-7-9.1V6l7-2.5Z" />
-      <path d="m9.2 12 1.8 1.8 3.8-4" />
+    <svg viewBox="0 0 120 120" fill="none" {...props}>
+      <rect x="34" y="34" width="52" height="58" rx="10" stroke="currentColor" strokeWidth="8" />
+      <rect x="49" y="24" width="22" height="15" rx="5" fill="currentColor" />
+      <path d="M42 79L54 63L66 78L72 71L83 86H42Z" fill="var(--color-accent)" />
+      <circle cx="57" cy="53" r="5" fill="var(--color-accent)" />
+      <path d="M90 31L101 20" stroke="var(--color-accent)" strokeWidth="5" strokeLinecap="round" />
+      <path d="M95 42H108" stroke="var(--color-accent)" strokeWidth="5" strokeLinecap="round" />
     </svg>
   );
 }
 
-function PersonIcon() {
+/**
+ * Draws the image icon used by the choose-image action.
+ */
+function ImageIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="7.6" r="3.1" />
-      <path d="M5.6 20a6.4 6.4 0 0 1 12.8 0" />
-      <path d="M17.6 11.3a3.3 3.3 0 1 0 3.2 3.3" />
+    <svg viewBox="0 0 24 24" fill="none" {...props}>
+      <rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" strokeWidth="2" />
+      <path d="M5.5 17L10 12L13 15L15 13L19 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="15.5" cy="8.5" r="1.5" fill="currentColor" />
     </svg>
   );
 }
 
-function CloudIcon() {
+/**
+ * Draws the clipboard icon used by the paste action.
+ */
+function ClipboardIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M7.8 18.2h9.1a4.1 4.1 0 0 0 .5-8.2 6 6 0 0 0-11.1 1.7A3.4 3.4 0 0 0 7.8 18.2Z" />
-      <path d="M9 14.2h6" />
+    <svg viewBox="0 0 24 24" fill="none" {...props}>
+      <path d="M9 5H7.5A2.5 2.5 0 0 0 5 7.5V19a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7.5A2.5 2.5 0 0 0 16.5 5H15" stroke="currentColor" strokeWidth="2" />
+      <rect x="9" y="3" width="6" height="4" rx="2" stroke="currentColor" strokeWidth="2" />
     </svg>
   );
 }
 
-function FolderIcon() {
+/**
+ * Draws the shield icon used by the browser-only trust badge.
+ */
+function ShieldIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M3.5 7.8h6l1.7 2h9.3v8.7a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V7.8Z" />
-      <path d="M3.5 7.8V6.6a2 2 0 0 1 2-2h4l1.8 2.1h7.2a2 2 0 0 1 2 2v1.1" />
+    <svg viewBox="0 0 24 24" fill="none" {...props}>
+      <path d="M12 3L19 6V11.5C19 16 16.2 19.5 12 21C7.8 19.5 5 16 5 11.5V6L12 3Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
     </svg>
   );
 }
 
-function CheckIcon() {
+/**
+ * Draws the user icon used by the no-sign-in trust badge.
+ */
+function UserIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" />
-      <path d="m8.3 12.2 2.3 2.4 5.1-5.3" />
+    <svg viewBox="0 0 24 24" fill="none" {...props}>
+      <circle cx="12" cy="8" r="3" stroke="currentColor" strokeWidth="2" />
+      <path d="M5 20C6.3 16.8 8.6 15 12 15C15.4 15 17.7 16.8 19 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
 
-function DownloadIcon() {
+/**
+ * Draws the cloud icon used by the no-upload-needed trust badge.
+ */
+function CloudIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 3.8v11" />
-      <path d="m7.4 10.4 4.6 4.6 4.6-4.6" />
-      <path d="M5 18.6h14" />
+    <svg viewBox="0 0 24 24" fill="none" {...props}>
+      <path d="M8 18H17A4 4 0 0 0 17 10C16.3 6.9 13.8 5 10.8 5C7.9 5 5.5 7.1 5.1 10A4 4 0 0 0 8 18Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
-function LockIcon() {
+/**
+ * Draws the lock icon used by the local-device privacy note.
+ */
+function LockIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="6" y="10.2" width="12" height="9" rx="2" />
-      <path d="M8.4 10.2V8a3.6 3.6 0 0 1 7.2 0v2.2" />
+    <svg viewBox="0 0 24 24" fill="none" {...props}>
+      <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="2" />
+      <path d="M8 10V8A4 4 0 0 1 16 8V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }

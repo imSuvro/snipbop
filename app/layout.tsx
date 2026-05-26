@@ -3,7 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "SnipBop",
-  description: "Paste an image, choose a format, and export instantly.",
+  description:
+    "Paste an image, choose a format, and export it instantly in your browser.",
 };
 
 const themeScript = `
