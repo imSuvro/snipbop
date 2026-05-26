@@ -53,6 +53,12 @@ const outputFormats: Array<{ value: OutputFormat; label: string; mimeType: strin
   { value: "webp", label: "WebP", mimeType: "image/webp" },
 ];
 
+const outputExtensions: Record<OutputFormat, string> = {
+  png: "png",
+  jpg: "jpg",
+  webp: "webp",
+};
+
 const qualityPresets: Array<{ value: QualityPreset; label: string; quality: number }> = [
   { value: "small", label: "Small", quality: 0.75 },
   { value: "balanced", label: "Balanced", quality: 0.86 },
@@ -77,6 +83,15 @@ const heicMimeTypes = new Set([
   "image/heic-sequence",
   "image/heif",
   "image/heif-sequence",
+]);
+
+const reservedFileNames = new Set([
+  "aux",
+  "con",
+  "nul",
+  "prn",
+  ...Array.from({ length: 9 }, (_, index) => `com${index + 1}`),
+  ...Array.from({ length: 9 }, (_, index) => `lpt${index + 1}`),
 ]);
 
 const stateCopy: Record<
@@ -147,7 +162,8 @@ export function ClipboardImageTool() {
   const [preview, setPreview] = useState<ImagePreview | null>(null);
   const [outputFormat, setOutputFormat] = useState<OutputFormat>("png");
   const [qualityPreset, setQualityPreset] = useState<QualityPreset>("balanced");
-  const [fileName, setFileName] = useState("screenshot");
+  const [fileName, setFileName] = useState("snipbop-image");
+  const [downloadedFileName, setDownloadedFileName] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [liveMessage, setLiveMessage] = useState(stateCopy.idle.message);
@@ -163,6 +179,7 @@ export function ClipboardImageTool() {
 
     setPreview(null);
     setIsExporting(false);
+    setDownloadedFileName(null);
   }, []);
 
   const setImagePreview = useCallback(
@@ -173,7 +190,7 @@ export function ClipboardImageTool() {
 
       const url = URL.createObjectURL(blob);
       const nextFormat = getInitialOutputFormat(blob, name);
-      const nextFileName = getBaseFileName(name);
+      const nextFileName = getDefaultDownloadBaseName();
       previewUrlRef.current = url;
       setPreview({
         blob,
@@ -186,6 +203,7 @@ export function ClipboardImageTool() {
       });
       setOutputFormat(nextFormat);
       setFileName(nextFileName);
+      setDownloadedFileName(null);
       setClipboardState("imageFound");
       setLiveMessage(
         `Image loaded. ${formatDimensions(dimensions)}. Original file size ${formatBytes(blob.size)}.`,
@@ -254,9 +272,7 @@ export function ClipboardImageTool() {
         return;
       }
 
-      const imageItem = Array.from(clipboardData.items).find((item) =>
-        item.type.startsWith("image/"),
-      );
+      const imageItem = getClipboardImageItem(clipboardData);
 
       void handleImageBlob(imageItem?.getAsFile(), "Pasted image");
     },
@@ -274,6 +290,14 @@ export function ClipboardImageTool() {
 
   useEffect(() => {
     const handleWindowPaste = (event: ClipboardEvent) => {
+      if (
+        isEditablePasteTarget(event.target) ||
+        !getClipboardImageItem(event.clipboardData)
+      ) {
+        return;
+      }
+
+      event.preventDefault();
       handlePasteData(event.clipboardData);
     };
 
@@ -339,6 +363,7 @@ export function ClipboardImageTool() {
     }
 
     setIsExporting(true);
+    setDownloadedFileName(null);
 
     try {
       const exportedBlob = await createExportBlob(
@@ -346,9 +371,10 @@ export function ClipboardImageTool() {
         outputFormat,
         getExportQuality(outputFormat, qualityPreset),
       );
-      const downloadName = `${getSafeDownloadName(fileName)}.${outputFormat}`;
+      const downloadName = getDownloadFileName(fileName, outputFormat);
       triggerBlobDownload(exportedBlob, downloadName);
-      setLiveMessage(`Download started for ${downloadName}.`);
+      setDownloadedFileName(downloadName);
+      setLiveMessage(`Downloaded ${downloadName}`);
     } catch {
       setLiveMessage("Export failed. Try another format or replace the image.");
     } finally {
@@ -491,7 +517,10 @@ export function ClipboardImageTool() {
                     role="radio"
                     aria-checked={outputFormat === format.value}
                     key={format.value}
-                    onClick={() => setOutputFormat(format.value)}
+                    onClick={() => {
+                      setOutputFormat(format.value);
+                      setDownloadedFileName(null);
+                    }}
                   >
                     {format.label}
                     {outputFormat === format.value ? <CheckSmallIcon aria-hidden="true" /> : null}
@@ -516,7 +545,10 @@ export function ClipboardImageTool() {
                       role="radio"
                       aria-checked={qualityPreset === preset.value}
                       key={preset.value}
-                      onClick={() => setQualityPreset(preset.value)}
+                      onClick={() => {
+                        setQualityPreset(preset.value);
+                        setDownloadedFileName(null);
+                      }}
                     >
                       <span>{preset.label}</span>
                       <span>{Math.round(preset.quality * 100)}%</span>
@@ -532,10 +564,13 @@ export function ClipboardImageTool() {
                 <FileIcon aria-hidden="true" />
                 <input
                   value={fileName}
-                  onChange={(event) => setFileName(event.target.value)}
+                  onChange={(event) => {
+                    setFileName(event.target.value);
+                    setDownloadedFileName(null);
+                  }}
                   aria-label="File name without extension"
                 />
-                <span>.{outputFormat}</span>
+                <span>.{outputExtensions[outputFormat]}</span>
               </span>
             </label>
 
@@ -548,6 +583,13 @@ export function ClipboardImageTool() {
               <DownloadIcon aria-hidden="true" />
               {isExporting ? "Preparing..." : "Export Image"}
             </button>
+
+            {downloadedFileName ? (
+              <p className={styles.downloadSuccess}>
+                <CheckSmallIcon aria-hidden="true" />
+                Downloaded {downloadedFileName}
+              </p>
+            ) : null}
           </form>
         </div>
       ) : (
@@ -636,21 +678,64 @@ function formatBytes(size: number) {
   return `${(size / 1024 / 1024).toFixed(1)} MB`;
 }
 
-function getBaseFileName(name: string) {
-  const withoutExtension = name.replace(/\.[^/.\\]+$/, "");
-  const safeName = withoutExtension
-    .trim()
-    .replace(/[\u0000-\u001f<>:"/\\|?*]+/g, "-")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "")
-    .toLowerCase();
+function getDefaultDownloadBaseName(date = new Date()) {
+  const year = date.getFullYear();
+  const month = padDatePart(date.getMonth() + 1);
+  const day = padDatePart(date.getDate());
+  const hours = padDatePart(date.getHours());
+  const minutes = padDatePart(date.getMinutes());
 
-  return safeName || "screenshot";
+  return `snipbop-image-${year}-${month}-${day}-${hours}${minutes}`;
+}
+
+function padDatePart(value: number) {
+  return String(value).padStart(2, "0");
+}
+
+function getDownloadFileName(name: string, format: OutputFormat) {
+  return `${getSafeDownloadName(name)}.${outputExtensions[format]}`;
+}
+
+function getClipboardImageItem(clipboardData: DataTransfer | null) {
+  if (!clipboardData) {
+    return undefined;
+  }
+
+  return Array.from(clipboardData.items).find((item) => item.type.startsWith("image/"));
+}
+
+function isEditablePasteTarget(target: EventTarget | null) {
+  return (
+    target instanceof HTMLElement &&
+    (target.isContentEditable ||
+      target instanceof HTMLInputElement ||
+      target instanceof HTMLTextAreaElement ||
+      target instanceof HTMLSelectElement)
+  );
 }
 
 function getSafeDownloadName(name: string) {
-  return getBaseFileName(name) || "snipbop-image";
+  const withoutExtension = name.replace(/\.[^/.\\]+$/, "");
+  const safeName = withoutExtension
+    .trim()
+    .replace(/[\u0000-\u001f\u007f<>:"/\\|?*]+/g, "-")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^[.\-]+|[.\-]+$/g, "")
+    .slice(0, 160)
+    .replace(/[.\-]+$/g, "");
+
+  if (!safeName) {
+    return getDefaultDownloadBaseName();
+  }
+
+  const reservedName = safeName.split(".")[0]?.toLowerCase();
+
+  if (reservedName && reservedFileNames.has(reservedName)) {
+    return `${safeName}-file`;
+  }
+
+  return safeName;
 }
 
 function getInitialOutputFormat(blob: Blob, name: string): OutputFormat {
