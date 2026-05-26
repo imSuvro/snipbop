@@ -1,15 +1,297 @@
+import type { SVGProps } from "react";
 import styles from "./page.module.css";
+
+const navLinks = [
+  { label: "How it works", href: "#how-it-works" },
+  { label: "Clipboard help", href: "#clipboard-help" },
+  { label: "Privacy", href: "#privacy" },
+  { label: "Feedback", href: "mailto:feedback@snipbop.app" },
+];
+
+const trustBadges = [
+  { label: "Runs in your browser", icon: ShieldIcon },
+  { label: "No sign in", icon: UserIcon },
+  { label: "No upload needed", icon: CloudIcon },
+];
+
+const steps = [
+  {
+    number: "01",
+    title: "Add your image",
+    text: "Choose a file, drop one in, or use the clipboard when your browser allows it.",
+  },
+  {
+    number: "02",
+    title: "Pick the output",
+    text: "Name the file and choose the image format you want to save next.",
+  },
+  {
+    number: "03",
+    title: "Export locally",
+    text: "Download from the browser. The image does not need an account or a server trip.",
+  },
+];
+
+const faqs = [
+  {
+    question: "Does SnipBop upload my image?",
+    answer:
+      "No. This first shell is designed around local, browser-based image handling.",
+  },
+  {
+    question: "Will clipboard paste work everywhere?",
+    answer:
+      "Clipboard access depends on browser support and device permissions, especially on mobile.",
+  },
+  {
+    question: "Do I need to create an account?",
+    answer:
+      "No sign in is planned for the core image paste and export workflow.",
+  },
+  {
+    question: "Which formats will SnipBop support?",
+    answer:
+      "The intended export choices are PNG, JPG, WebP, and SVG once export logic is added.",
+  },
+];
+
+const footerLinks = [
+  { label: "Product", href: "#top" },
+  { label: "Resources", href: "#how-it-works" },
+  { label: "Support", href: "mailto:support@snipbop.app" },
+  { label: "Privacy", href: "#privacy", id: "privacy" },
+  { label: "Terms", href: "#terms", id: "terms" },
+  { label: "Contact", href: "mailto:hello@snipbop.app" },
+];
 
 export default function Home() {
   return (
-    <main className={styles.page}>
-      <section className={styles.panel} aria-labelledby="home-title">
-        <p className={styles.eyebrow}>SnipBop</p>
-        <h1 id="home-title">A clean workspace for sharper snippets.</h1>
-        <p className={styles.copy}>
-          Snip once. Shape quickly. Keep the good parts moving.
+    <main className={styles.page} id="top">
+      <header className={styles.header}>
+        <a className={styles.brand} href="#top" aria-label="SnipBop home">
+          <LogoMark className={styles.logoMark} />
+          <span className={styles.wordmark}>
+            Snip<span>Bop</span>
+          </span>
+        </a>
+
+        <nav className={styles.nav} aria-label="Main navigation">
+          {navLinks.map((link) => (
+            <a href={link.href} key={link.label}>
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      </header>
+
+      <section className={styles.hero} aria-labelledby="home-title">
+        <div className={styles.heroCopy}>
+          <p className={styles.eyebrow}>Fast browser image export</p>
+          <h1 id="home-title" className={styles.title}>
+            <span className={styles.desktopTitle}>
+              <span className={styles.titleLine}>Paste an image.</span>
+              <span className={styles.titleLine}>
+                Export <span className={styles.accentText}>instantly.</span>
+              </span>
+            </span>
+            <span className={styles.mobileTitle}>
+              <span className={styles.titleLine}>Add your image.</span>
+              <span className={styles.titleLine}>
+                Export <span className={styles.accentText}>instantly.</span>
+              </span>
+            </span>
+          </h1>
+          <p className={styles.lede}>
+            Save screenshots, copied images, and photos as clean downloadable
+            files right from your browser.
+          </p>
+
+          <div className={styles.trustList} aria-label="SnipBop trust signals">
+            {trustBadges.map(({ label, icon: Icon }) => (
+              <span className={styles.trustBadge} key={label}>
+                <Icon aria-hidden="true" />
+                {label}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <section className={styles.tool} aria-labelledby="upload-title">
+          <div className={styles.dropZone}>
+            <ClipboardImageIcon className={styles.uploadIcon} aria-hidden="true" />
+            <div>
+              <h2 id="upload-title">Add your image</h2>
+              <p>Paste an image, choose a file, or drop one here.</p>
+            </div>
+
+            <div className={styles.actions}>
+              <button className={styles.primaryButton} type="button">
+                <ImageIcon aria-hidden="true" />
+                Choose Image
+              </button>
+              <button className={styles.secondaryButton} type="button">
+                <ClipboardIcon aria-hidden="true" />
+                Paste from Clipboard
+              </button>
+            </div>
+          </div>
+
+          <p className={styles.lockNote}>
+            <LockIcon aria-hidden="true" />
+            Your image stays on your device until you export.
+          </p>
+        </section>
+      </section>
+
+      <section
+        className={`${styles.section} ${styles.howItWorks}`}
+        id="how-it-works"
+        aria-labelledby="how-title"
+      >
+        <div className={styles.sectionIntro}>
+          <p className={styles.eyebrow}>How it works</p>
+          <h2 id="how-title">Three steps from image to file.</h2>
+        </div>
+        <div className={styles.stepGrid}>
+          {steps.map((step) => (
+            <article className={styles.step} key={step.number}>
+              <span>{step.number}</span>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section
+        className={`${styles.section} ${styles.clipboardHelp}`}
+        id="clipboard-help"
+        aria-labelledby="clipboard-title"
+      >
+        <div>
+          <p className={styles.eyebrow}>Clipboard help</p>
+          <h2 id="clipboard-title">Paste support depends on the browser.</h2>
+        </div>
+        <p>
+          Desktop browsers usually allow paste after keyboard input. Mobile
+          browsers may ask for permission or require choosing an image instead.
         </p>
       </section>
+
+      <section
+        className={`${styles.section} ${styles.faqSection}`}
+        aria-labelledby="faq-title"
+      >
+        <div className={styles.sectionIntro}>
+          <p className={styles.eyebrow}>FAQ</p>
+          <h2 id="faq-title">Quick answers before exporting.</h2>
+        </div>
+        <div className={styles.faqList}>
+          {faqs.map((faq) => (
+            <details className={styles.faqItem} key={faq.question}>
+              <summary>{faq.question}</summary>
+              <p>{faq.answer}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <footer className={styles.footer}>
+        <div className={styles.footerBrand}>
+          <a className={styles.brand} href="#top" aria-label="SnipBop home">
+            <LogoMark className={styles.logoMark} />
+            <span className={styles.wordmark}>
+              Snip<span>Bop</span>
+            </span>
+          </a>
+          <p>The fastest way to turn a copied image into a clean download.</p>
+        </div>
+
+        <nav className={styles.footerLinks} aria-label="Footer navigation">
+          {footerLinks.map((link) => (
+            <a href={link.href} id={link.id} key={link.label}>
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      </footer>
     </main>
+  );
+}
+
+function LogoMark(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 48 56" fill="none" {...props}>
+      <rect x="7" y="9" width="34" height="40" rx="7" stroke="currentColor" strokeWidth="4" />
+      <rect x="17" y="4" width="14" height="9" rx="3" stroke="currentColor" strokeWidth="4" />
+      <path d="M14 39L21 29L28 37L32 32L38 41H14Z" fill="var(--accent)" />
+      <circle cx="31" cy="22" r="4" fill="var(--accent)" />
+    </svg>
+  );
+}
+
+function ClipboardImageIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 120 120" fill="none" {...props}>
+      <rect x="34" y="34" width="52" height="58" rx="10" stroke="currentColor" strokeWidth="8" />
+      <rect x="49" y="24" width="22" height="15" rx="5" fill="currentColor" />
+      <path d="M42 79L54 63L66 78L72 71L83 86H42Z" fill="var(--accent)" />
+      <circle cx="57" cy="53" r="5" fill="var(--accent)" />
+      <path d="M90 31L101 20" stroke="var(--accent)" strokeWidth="5" strokeLinecap="round" />
+      <path d="M95 42H108" stroke="var(--accent)" strokeWidth="5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ImageIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" {...props}>
+      <rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" strokeWidth="2" />
+      <path d="M5.5 17L10 12L13 15L15 13L19 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="15.5" cy="8.5" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+function ClipboardIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" {...props}>
+      <path d="M9 5H7.5A2.5 2.5 0 0 0 5 7.5V19a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7.5A2.5 2.5 0 0 0 16.5 5H15" stroke="currentColor" strokeWidth="2" />
+      <rect x="9" y="3" width="6" height="4" rx="2" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
+
+function ShieldIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" {...props}>
+      <path d="M12 3L19 6V11.5C19 16 16.2 19.5 12 21C7.8 19.5 5 16 5 11.5V6L12 3Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function UserIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" {...props}>
+      <circle cx="12" cy="8" r="3" stroke="currentColor" strokeWidth="2" />
+      <path d="M5 20C6.3 16.8 8.6 15 12 15C15.4 15 17.7 16.8 19 20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function CloudIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" {...props}>
+      <path d="M8 18H17A4 4 0 0 0 17 10C16.3 6.9 13.8 5 10.8 5C7.9 5 5.5 7.1 5.1 10A4 4 0 0 0 8 18Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function LockIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" {...props}>
+      <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="2" />
+      <path d="M8 10V8A4 4 0 0 1 16 8V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
   );
 }

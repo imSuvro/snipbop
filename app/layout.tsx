@@ -3,7 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "SnipBop",
-  description: "A lightweight Next.js and TypeScript app.",
+  description:
+    "Paste an image, choose a format, and export it instantly in your browser.",
 };
 
 export default function RootLayout({
