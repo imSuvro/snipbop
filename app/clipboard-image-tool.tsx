@@ -18,7 +18,12 @@ type ClipboardState =
   | "imageFound"
   | "permissionDenied"
   | "noImage"
-  | "unsupported";
+  | "unsupported"
+  | "unsupportedFile"
+  | "multipleFiles"
+  | "pdfUnsupported"
+  | "heicUnsupported"
+  | "animatedGifUnsupported";
 
 type ImagePreview = {
   name: string;
@@ -26,6 +31,31 @@ type ImagePreview = {
   type: string;
   url: string;
 };
+
+type ImageValidationResult =
+  | { ok: true; blob: Blob; name: string }
+  | { ok: false; state: ClipboardState };
+
+const imageExtensions = new Set([
+  "avif",
+  "bmp",
+  "gif",
+  "heic",
+  "heif",
+  "ico",
+  "jpeg",
+  "jpg",
+  "png",
+  "svg",
+  "webp",
+]);
+
+const heicMimeTypes = new Set([
+  "image/heic",
+  "image/heic-sequence",
+  "image/heif",
+  "image/heif-sequence",
+]);
 
 const stateCopy: Record<
   ClipboardState,
@@ -58,6 +88,33 @@ const stateCopy: Record<
     message:
       "This browser cannot read images from the clipboard button. Tap the paste area or choose an image instead.",
   },
+  unsupportedFile: {
+    label: "Unsupported file",
+    title: "That file is not supported",
+    message: "Choose a browser-readable image like PNG, JPG, WebP, SVG, HEIC, HEIF, or still GIF.",
+  },
+  multipleFiles: {
+    label: "Too many files",
+    title: "Choose one image at a time.",
+    message: "Drop or choose a single image file.",
+  },
+  pdfUnsupported: {
+    label: "PDF not supported",
+    title: "PDFs are not supported",
+    message: "Choose a PNG, JPG, WebP, SVG, HEIC, HEIF, or still GIF image.",
+  },
+  heicUnsupported: {
+    label: "HEIC needs browser support",
+    title: "This browser cannot open HEIC or HEIF",
+    message:
+      "HEIC and HEIF only work when your browser can decode them natively. Try another image format.",
+  },
+  animatedGifUnsupported: {
+    label: "Animated GIF blocked",
+    title: "Animated GIFs are not supported yet",
+    message:
+      "Animated GIF conversion is not available in this MVP. Choose a still image instead.",
+  },
 };
 
 /**
@@ -69,6 +126,7 @@ export function ClipboardImageTool() {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
+  const validationRequestRef = useRef(0);
 
   const clearPreview = useCallback(() => {
     if (previewUrlRef.current) {
@@ -95,24 +153,59 @@ export function ClipboardImageTool() {
     setClipboardState("imageFound");
   }, []);
 
+  const showInputState = useCallback(
+    (state: ClipboardState) => {
+      validationRequestRef.current += 1;
+      clearPreview();
+      setClipboardState(state);
+    },
+    [clearPreview],
+  );
+
   const handleImageBlob = useCallback(
-    (blob: Blob | null | undefined, name?: string) => {
-      if (!blob || !blob.type.startsWith("image/")) {
-        clearPreview();
-        setClipboardState("noImage");
+    async (blob: Blob | null | undefined, name?: string) => {
+      const requestId = validationRequestRef.current + 1;
+      validationRequestRef.current = requestId;
+      const validation = await validateImageBlob(blob, name);
+
+      if (requestId !== validationRequestRef.current) {
         return;
       }
 
-      setImagePreview(blob, name);
+      if (!validation.ok) {
+        showInputState(validation.state);
+        return;
+      }
+
+      setImagePreview(validation.blob, validation.name);
     },
-    [clearPreview, setImagePreview],
+    [setImagePreview, showInputState],
+  );
+
+  const handleFiles = useCallback(
+    async (files: FileList | File[] | null | undefined) => {
+      const fileList = files ? Array.from(files) : [];
+
+      if (fileList.length === 0) {
+        showInputState("noImage");
+        return;
+      }
+
+      if (fileList.length > 1) {
+        showInputState("multipleFiles");
+        return;
+      }
+
+      const [file] = fileList;
+      await handleImageBlob(file, file.name);
+    },
+    [handleImageBlob, showInputState],
   );
 
   const handlePasteData = useCallback(
     (clipboardData: DataTransfer | null) => {
       if (!clipboardData) {
-        clearPreview();
-        setClipboardState("noImage");
+        showInputState("noImage");
         return;
       }
 
@@ -120,9 +213,9 @@ export function ClipboardImageTool() {
         item.type.startsWith("image/"),
       );
 
-      handleImageBlob(imageItem?.getAsFile(), "Pasted image");
+      void handleImageBlob(imageItem?.getAsFile(), "Pasted image");
     },
-    [clearPreview, handleImageBlob],
+    [handleImageBlob, showInputState],
   );
 
   const handlePaste = useCallback(
@@ -152,8 +245,7 @@ export function ClipboardImageTool() {
 
   const handleClipboardRead = async () => {
     if (!("clipboard" in navigator) || !navigator.clipboard.read) {
-      clearPreview();
-      setClipboardState("unsupported");
+      showInputState("unsupported");
       return;
     }
 
@@ -162,44 +254,38 @@ export function ClipboardImageTool() {
       const currentItem = clipboardItems[0];
 
       if (!currentItem) {
-        clearPreview();
-        setClipboardState("noImage");
+        showInputState("noImage");
         return;
       }
 
       const imageType = currentItem.types.find((type) => type.startsWith("image/"));
 
       if (!imageType) {
-        clearPreview();
-        setClipboardState("noImage");
+        showInputState("noImage");
         return;
       }
 
       const blob = await currentItem.getType(imageType);
-      handleImageBlob(blob, "Clipboard image");
+      await handleImageBlob(blob, "Clipboard image");
     } catch (error) {
       if (error instanceof DOMException) {
         if (error.name === "NotAllowedError" || error.name === "SecurityError") {
-          clearPreview();
-          setClipboardState("permissionDenied");
+          showInputState("permissionDenied");
           return;
         }
 
         if (error.name === "NotFoundError") {
-          clearPreview();
-          setClipboardState("noImage");
+          showInputState("noImage");
           return;
         }
       }
 
-      clearPreview();
-      setClipboardState("unsupported");
+      showInputState("unsupported");
     }
   };
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    handleImageBlob(file, file?.name);
+    void handleFiles(event.target.files);
     event.target.value = "";
   };
 
@@ -207,10 +293,7 @@ export function ClipboardImageTool() {
     event.preventDefault();
     setIsDragging(false);
 
-    const file = Array.from(event.dataTransfer.files).find((item) =>
-      item.type.startsWith("image/"),
-    );
-    handleImageBlob(file, file?.name);
+    void handleFiles(event.dataTransfer.files);
   };
 
   const activeCopy = stateCopy[clipboardState];
@@ -230,7 +313,12 @@ export function ClipboardImageTool() {
           event.preventDefault();
         }}
         onDragLeave={(event) => {
-          if (event.currentTarget === event.target) {
+          const nextTarget = event.relatedTarget;
+
+          if (
+            !(nextTarget instanceof Node) ||
+            !event.currentTarget.contains(nextTarget)
+          ) {
             setIsDragging(false);
           }
         }}
@@ -301,7 +389,7 @@ export function ClipboardImageTool() {
           ref={fileInputRef}
           hidden
           type="file"
-          accept="image/*"
+          accept="image/*,.heic,.heif"
           onChange={handleFileChange}
         />
       </div>
@@ -324,6 +412,187 @@ function formatBytes(size: number) {
   }
 
   return `${(size / 1024 / 1024).toFixed(1)} MB`;
+}
+
+async function validateImageBlob(
+  blob: Blob | null | undefined,
+  name = "Image",
+): Promise<ImageValidationResult> {
+  if (!blob) {
+    return { ok: false, state: "noImage" };
+  }
+
+  if (isPdf(blob, name)) {
+    return { ok: false, state: "pdfUnsupported" };
+  }
+
+  if (!isImageLike(blob, name)) {
+    return { ok: false, state: "unsupportedFile" };
+  }
+
+  if (isGif(blob, name) && (await isAnimatedGif(blob))) {
+    return { ok: false, state: "animatedGifUnsupported" };
+  }
+
+  const canDecode = await canBrowserDecode(blob);
+
+  if (!canDecode) {
+    return {
+      ok: false,
+      state: isHeicOrHeif(blob, name) ? "heicUnsupported" : "unsupportedFile",
+    };
+  }
+
+  return { ok: true, blob, name };
+}
+
+function getExtension(name: string) {
+  const match = /\.([^.]+)$/.exec(name);
+  return match?.[1]?.toLowerCase() ?? "";
+}
+
+function isPdf(blob: Blob, name: string) {
+  return blob.type === "application/pdf" || getExtension(name) === "pdf";
+}
+
+function isImageLike(blob: Blob, name: string) {
+  const extension = getExtension(name);
+  return blob.type.startsWith("image/") || imageExtensions.has(extension);
+}
+
+function isGif(blob: Blob, name: string) {
+  return blob.type === "image/gif" || getExtension(name) === "gif";
+}
+
+function isHeicOrHeif(blob: Blob, name: string) {
+  const extension = getExtension(name);
+  return (
+    heicMimeTypes.has(blob.type) ||
+    extension === "heic" ||
+    extension === "heif"
+  );
+}
+
+function canBrowserDecode(blob: Blob) {
+  if (blob.size === 0) {
+    return Promise.resolve(false);
+  }
+
+  const url = URL.createObjectURL(blob);
+
+  return new Promise<boolean>((resolve) => {
+    const image = new window.Image();
+    let settled = false;
+
+    const finish = (didDecode: boolean) => {
+      if (settled) {
+        return;
+      }
+
+      settled = true;
+      URL.revokeObjectURL(url);
+      resolve(didDecode);
+    };
+
+    image.onload = () => finish(true);
+    image.onerror = () => finish(false);
+    image.src = url;
+
+    if (typeof image.decode === "function") {
+      image.decode().then(() => finish(true)).catch(() => finish(false));
+    }
+  });
+}
+
+async function isAnimatedGif(blob: Blob) {
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+
+  if (bytes.length < 13 || !isGifHeader(bytes)) {
+    return false;
+  }
+
+  let offset = 13;
+  const packedField = bytes[10];
+
+  if (packedField & 0x80) {
+    offset += 3 * 2 ** ((packedField & 0x07) + 1);
+  }
+
+  let frameCount = 0;
+
+  const skipSubBlocks = () => {
+    while (offset < bytes.length) {
+      const blockSize = bytes[offset];
+      offset += 1;
+
+      if (blockSize === 0) {
+        return true;
+      }
+
+      offset += blockSize;
+    }
+
+    return false;
+  };
+
+  while (offset < bytes.length) {
+    const blockType = bytes[offset];
+    offset += 1;
+
+    if (blockType === 0x3b) {
+      return false;
+    }
+
+    if (blockType === 0x21) {
+      offset += 1;
+
+      if (!skipSubBlocks()) {
+        return false;
+      }
+
+      continue;
+    }
+
+    if (blockType !== 0x2c) {
+      return false;
+    }
+
+    frameCount += 1;
+
+    if (frameCount > 1) {
+      return true;
+    }
+
+    if (offset + 9 > bytes.length) {
+      return false;
+    }
+
+    offset += 9;
+    const imagePackedField = bytes[offset - 1];
+
+    if (imagePackedField & 0x80) {
+      offset += 3 * 2 ** ((imagePackedField & 0x07) + 1);
+    }
+
+    offset += 1;
+
+    if (!skipSubBlocks()) {
+      return false;
+    }
+  }
+
+  return false;
+}
+
+function isGifHeader(bytes: Uint8Array) {
+  return (
+    bytes[0] === 0x47 &&
+    bytes[1] === 0x49 &&
+    bytes[2] === 0x46 &&
+    bytes[3] === 0x38 &&
+    (bytes[4] === 0x37 || bytes[4] === 0x39) &&
+    bytes[5] === 0x61
+  );
 }
 
 function ClipboardImageIcon(props: SVGProps<SVGSVGElement>) {
