@@ -38,3 +38,5 @@ Open http://localhost:3000.
 ## Notes
 
 This initial setup intentionally has no auth layer and no backend service.
+Feedback links use `NEXT_PUBLIC_SNIPBOP_FEEDBACK_EMAIL` when set and fall back
+to `suvro.samajder@gmail.com`.

@@ -1,0 +1,327 @@
+.page {
+  min-height: 100vh;
+  color: var(--color-text);
+  background:
+    linear-gradient(180deg, rgba(12, 28, 43, 0.98) 0%, var(--color-page) 36%),
+    var(--color-page);
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-7);
+  width: 100%;
+  padding: 22px max(var(--space-6), calc((100vw - 1180px) / 2));
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-strong);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .header {
+    background: var(--color-surface);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+  }
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: max-content;
+  color: var(--color-text);
+  font-weight: 800;
+  transition:
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.brand:hover {
+  color: var(--color-accent);
+}
+
+.logoMark {
+  width: 38px;
+  height: 44px;
+  color: var(--color-text);
+  filter: drop-shadow(0 8px 16px rgba(11, 183, 173, 0.18));
+}
+
+.wordmark {
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.wordmark span {
+  color: var(--color-accent);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.topNav,
+.footer nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-6);
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.topNav a,
+.footer a {
+  transition:
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.topNav a:hover,
+.footer a:hover {
+  color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
+.hero,
+.content,
+.footer {
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  padding-inline: var(--space-6);
+}
+
+.hero {
+  display: grid;
+  gap: var(--space-4);
+  padding-top: 74px;
+  padding-bottom: 38px;
+}
+
+.eyebrow {
+  color: var(--color-accent);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  max-width: 780px;
+  color: var(--color-text);
+  font-size: 4.05rem;
+  line-height: 1.06;
+  letter-spacing: 0;
+}
+
+.hero p:last-child {
+  max-width: 720px;
+  color: var(--color-muted);
+  font-size: 1.12rem;
+  line-height: 1.65;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: minmax(250px, 0.36fr) minmax(0, 1fr);
+  gap: var(--space-7);
+  padding-top: 42px;
+  padding-bottom: 52px;
+}
+
+.summaryPanel {
+  align-self: start;
+  display: grid;
+  gap: var(--space-4);
+  padding: 22px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xs);
+  background:
+    linear-gradient(135deg, rgba(11, 183, 173, 0.08), transparent 58%),
+    var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.summaryPanel h2,
+.legalSections h2 {
+  color: var(--color-text);
+  letter-spacing: 0;
+}
+
+.summaryPanel h2 {
+  font-size: 1.25rem;
+}
+
+.summaryPanel ul,
+.legalCard ul {
+  display: grid;
+  gap: 12px;
+  padding-left: 1.15rem;
+}
+
+.summaryPanel li,
+.legalCard li,
+.legalCard p {
+  color: var(--color-muted);
+  line-height: 1.65;
+}
+
+.summaryPanel li::marker,
+.legalCard li::marker {
+  color: var(--color-accent);
+}
+
+.legalSections {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.legalCard {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xs);
+  background: var(--color-control);
+}
+
+.legalCard h2 {
+  font-size: 1.45rem;
+  line-height: 1.2;
+}
+
+.legalCard a {
+  color: var(--color-accent);
+  font-weight: 900;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding-top: 34px;
+  padding-bottom: 42px;
+  border-top: 1px solid var(--color-border);
+}
+
+.footer p {
+  color: var(--color-muted);
+  font-weight: 800;
+}
+
+.brand:focus-visible,
+.topNav a:focus-visible,
+.footer a:focus-visible,
+.legalCard a:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 4px var(--color-focus);
+}
+
+:global(html[data-theme="light"]) .page {
+  background:
+    linear-gradient(180deg, #fbfcf8 0%, var(--color-page) 36%),
+    var(--color-page);
+}
+
+@media (prefers-color-scheme: light) {
+  :global(html:not([data-theme])) .page {
+    background:
+      linear-gradient(180deg, #fbfcf8 0%, var(--color-page) 36%),
+      var(--color-page);
+  }
+}
+
+@media (max-width: 920px) {
+  .header {
+    position: static;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .headerActions {
+    width: 100%;
+    align-items: flex-start;
+    flex-direction: column-reverse;
+    gap: var(--space-4);
+  }
+
+  .topNav {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 10px;
+    padding-bottom: 2px;
+    flex-wrap: wrap;
+  }
+
+  .topNav a {
+    flex: 0 0 auto;
+    padding: var(--space-2) 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xs);
+  }
+
+  .content {
+    grid-template-columns: 1fr;
+  }
+
+  .summaryPanel {
+    max-width: 640px;
+  }
+}
+
+@media (max-width: 680px) {
+  .header {
+    padding: 18px;
+  }
+
+  .wordmark {
+    font-size: 1.35rem;
+  }
+
+  .logoMark {
+    width: 34px;
+    height: 40px;
+  }
+
+  .hero,
+  .content,
+  .footer {
+    padding-inline: 18px;
+  }
+
+  .hero {
+    padding-top: 42px;
+    padding-bottom: 30px;
+  }
+
+  .hero h1 {
+    font-size: 2.42rem;
+  }
+
+  .legalCard {
+    padding: 20px;
+  }
+
+  .footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .footer nav {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
