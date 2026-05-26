@@ -53,7 +53,7 @@ const faqs = [
   {
     question: "Which formats will SnipBop support?",
     answer:
-      "The intended export choices are PNG, JPG, WebP, and SVG once export logic is added.",
+      "The MVP export choices are PNG, JPG, and WebP.",
   },
 ];
 

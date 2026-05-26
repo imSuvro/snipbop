@@ -25,7 +25,8 @@ type ClipboardState =
   | "heicUnsupported"
   | "animatedGifUnsupported";
 
-type OutputFormat = "png" | "jpg" | "webp" | "svg";
+type OutputFormat = "png" | "jpg" | "webp";
+type QualityPreset = "small" | "balanced" | "best";
 
 type ImagePreview = {
   blob: Blob;
@@ -50,7 +51,12 @@ const outputFormats: Array<{ value: OutputFormat; label: string; mimeType: strin
   { value: "png", label: "PNG", mimeType: "image/png" },
   { value: "jpg", label: "JPG", mimeType: "image/jpeg" },
   { value: "webp", label: "WebP", mimeType: "image/webp" },
-  { value: "svg", label: "SVG", mimeType: "image/svg+xml" },
+];
+
+const qualityPresets: Array<{ value: QualityPreset; label: string; quality: number }> = [
+  { value: "small", label: "Small", quality: 0.75 },
+  { value: "balanced", label: "Balanced", quality: 0.86 },
+  { value: "best", label: "Best", quality: 0.95 },
 ];
 
 const imageExtensions = new Set([
@@ -63,7 +69,6 @@ const imageExtensions = new Set([
   "jpeg",
   "jpg",
   "png",
-  "svg",
   "webp",
 ]);
 
@@ -108,7 +113,7 @@ const stateCopy: Record<
   unsupportedFile: {
     label: "Unsupported file",
     title: "That file is not supported",
-    message: "Choose a browser-readable image like PNG, JPG, WebP, SVG, HEIC, HEIF, or still GIF.",
+    message: "Choose a browser-readable image like PNG, JPG, WebP, HEIC, HEIF, or still GIF.",
   },
   multipleFiles: {
     label: "Too many files",
@@ -118,7 +123,7 @@ const stateCopy: Record<
   pdfUnsupported: {
     label: "PDF not supported",
     title: "PDFs are not supported",
-    message: "Choose a PNG, JPG, WebP, SVG, HEIC, HEIF, or still GIF image.",
+    message: "Choose a PNG, JPG, WebP, HEIC, HEIF, or still GIF image.",
   },
   heicUnsupported: {
     label: "HEIC needs browser support",
@@ -141,6 +146,7 @@ export function ClipboardImageTool() {
   const [clipboardState, setClipboardState] = useState<ClipboardState>("idle");
   const [preview, setPreview] = useState<ImagePreview | null>(null);
   const [outputFormat, setOutputFormat] = useState<OutputFormat>("png");
+  const [qualityPreset, setQualityPreset] = useState<QualityPreset>("balanced");
   const [fileName, setFileName] = useState("screenshot");
   const [isExporting, setIsExporting] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -335,7 +341,11 @@ export function ClipboardImageTool() {
     setIsExporting(true);
 
     try {
-      const exportedBlob = await createExportBlob(preview, outputFormat);
+      const exportedBlob = await createExportBlob(
+        preview,
+        outputFormat,
+        getExportQuality(outputFormat, qualityPreset),
+      );
       const downloadName = `${getSafeDownloadName(fileName)}.${outputFormat}`;
       triggerBlobDownload(exportedBlob, downloadName);
       setLiveMessage(`Download started for ${downloadName}.`);
@@ -360,6 +370,7 @@ export function ClipboardImageTool() {
 
   const activeCopy = stateCopy[clipboardState];
   const statusTone = styles[`status_${clipboardState}`] ?? "";
+  const showQualityPresets = outputFormat === "jpg" || outputFormat === "webp";
 
   return (
     <section
@@ -488,6 +499,32 @@ export function ClipboardImageTool() {
                 ))}
               </div>
             </fieldset>
+
+            {showQualityPresets ? (
+              <fieldset className={styles.qualityField}>
+                <legend>Quality preset</legend>
+                <div
+                  className={styles.qualityOptions}
+                  role="radiogroup"
+                  aria-label={`${outputFormat.toUpperCase()} quality preset`}
+                >
+                  {qualityPresets.map((preset) => (
+                    <button
+                      className={styles.qualityButton}
+                      data-selected={qualityPreset === preset.value}
+                      type="button"
+                      role="radio"
+                      aria-checked={qualityPreset === preset.value}
+                      key={preset.value}
+                      onClick={() => setQualityPreset(preset.value)}
+                    >
+                      <span>{preset.label}</span>
+                      <span>{Math.round(preset.quality * 100)}%</span>
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+            ) : null}
 
             <label className={styles.fileNameField}>
               <span>File name</span>
@@ -627,18 +664,14 @@ function getInitialOutputFormat(blob: Blob, name: string): OutputFormat {
     return "webp";
   }
 
-  if (blob.type === "image/svg+xml" || extension === "svg") {
-    return "svg";
-  }
-
   return "png";
 }
 
-async function createExportBlob(preview: ImagePreview, format: OutputFormat) {
-  if (format === "svg") {
-    return createSvgExportBlob(preview);
-  }
-
+async function createExportBlob(
+  preview: ImagePreview,
+  format: OutputFormat,
+  quality?: number,
+) {
   const mimeType = outputFormats.find((option) => option.value === format)?.mimeType;
 
   if (!mimeType) {
@@ -671,65 +704,59 @@ async function createExportBlob(preview: ImagePreview, format: OutputFormat) {
           return;
         }
 
+        if (blob.type !== mimeType) {
+          reject(new Error(`${format.toUpperCase()} export is unsupported`));
+          return;
+        }
+
         resolve(blob);
       },
       mimeType,
-      0.92,
+      quality,
     );
   });
 }
 
-async function createSvgExportBlob(preview: ImagePreview) {
-  if (preview.type === "image/svg+xml" || getExtension(preview.name) === "svg") {
-    return preview.blob;
+function getExportQuality(format: OutputFormat, preset: QualityPreset) {
+  if (format === "png") {
+    return undefined;
   }
 
-  const dataUrl = await readBlobAsDataUrl(preview.blob);
-  const svgMarkup = [
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${preview.width}" height="${preview.height}" viewBox="0 0 ${preview.width} ${preview.height}">`,
-    `<image href="${escapeAttribute(dataUrl)}" width="${preview.width}" height="${preview.height}" preserveAspectRatio="xMidYMid meet"/>`,
-    "</svg>",
-  ].join("");
-
-  return new Blob([svgMarkup], { type: "image/svg+xml" });
+  return qualityPresets.find((option) => option.value === preset)?.quality ?? 0.86;
 }
 
 function loadImageFromUrl(url: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new window.Image();
+    let settled = false;
 
-    image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error("Image could not be loaded"));
-    image.src = url;
-
-    if (typeof image.decode === "function") {
-      image.decode().then(() => resolve(image)).catch(reject);
-    }
-  });
-}
-
-function readBlobAsDataUrl(blob: Blob) {
-  return new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === "string") {
-        resolve(reader.result);
+    const finish = (error?: Error) => {
+      if (settled) {
         return;
       }
 
-      reject(new Error("Could not read image data"));
-    };
-    reader.onerror = () => reject(new Error("Could not read image data"));
-    reader.readAsDataURL(blob);
-  });
-}
+      settled = true;
 
-function escapeAttribute(value: string) {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+      if (error) {
+        reject(error);
+        return;
+      }
+
+      resolve(image);
+    };
+
+    image.onload = () => finish();
+    image.onerror = () => finish(new Error("Image could not be loaded"));
+    image.src = url;
+
+    if (typeof image.decode === "function") {
+      image.decode().then(() => finish()).catch(() => {
+        if (!image.complete) {
+          finish(new Error("Image could not be decoded"));
+        }
+      });
+    }
+  });
 }
 
 function triggerBlobDownload(blob: Blob, fileName: string) {
@@ -756,6 +783,10 @@ async function validateImageBlob(
 
   if (isPdf(blob, name)) {
     return { ok: false, state: "pdfUnsupported" };
+  }
+
+  if (isSvg(blob, name)) {
+    return { ok: false, state: "unsupportedFile" };
   }
 
   if (!isImageLike(blob, name)) {
@@ -785,6 +816,10 @@ function getExtension(name: string) {
 
 function isPdf(blob: Blob, name: string) {
   return blob.type === "application/pdf" || getExtension(name) === "pdf";
+}
+
+function isSvg(blob: Blob, name: string) {
+  return blob.type === "image/svg+xml" || getExtension(name) === "svg";
 }
 
 function isImageLike(blob: Blob, name: string) {

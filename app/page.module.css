@@ -474,7 +474,8 @@
   letter-spacing: 0;
 }
 
-.formatField {
+.formatField,
+.qualityField {
   display: grid;
   gap: 10px;
   min-width: 0;
@@ -482,6 +483,7 @@
 }
 
 .formatField legend,
+.qualityField legend,
 .fileNameField > span:first-child {
   margin-bottom: 10px;
   color: var(--color-text);
@@ -489,13 +491,15 @@
   font-weight: 800;
 }
 
-.formatOptions {
+.formatOptions,
+.qualityOptions {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
 .formatButton,
+.qualityButton,
 .ghostButton {
   display: inline-flex;
   align-items: center;
@@ -516,16 +520,34 @@
 }
 
 .formatButton:hover,
+.qualityButton:hover,
 .ghostButton:hover {
   border-color: var(--color-border-strong);
   transform: translateY(-1px);
 }
 
-.formatButton[data-selected="true"] {
+.formatButton[data-selected="true"],
+.qualityButton[data-selected="true"] {
   border-color: var(--color-accent);
   color: var(--color-accent);
   background: var(--color-control-active);
   box-shadow: var(--shadow-inset);
+}
+
+.qualityButton {
+  flex-direction: column;
+  gap: 2px;
+  min-height: 58px;
+}
+
+.qualityButton span:last-child {
+  color: var(--color-subtle);
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.qualityButton[data-selected="true"] span:last-child {
+  color: var(--color-accent);
 }
 
 .formatButton svg,
@@ -991,7 +1013,8 @@
 
   .previewStats,
   .readyActions,
-  .formatOptions {
+  .formatOptions,
+  .qualityOptions {
     grid-template-columns: 1fr;
   }
 
