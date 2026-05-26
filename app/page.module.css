@@ -279,9 +279,18 @@
 }
 
 .status_noImage,
-.status_unsupported {
+.status_unsupported,
+.status_unsupportedFile {
   color: var(--color-sky-500);
   background: rgba(79, 139, 216, 0.12);
+}
+
+.status_multipleFiles,
+.status_pdfUnsupported,
+.status_heicUnsupported,
+.status_animatedGifUnsupported {
+  color: #b45127;
+  background: rgba(244, 189, 119, 0.16);
 }
 
 .previewShell {
