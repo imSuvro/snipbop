@@ -208,6 +208,20 @@
   color: var(--color-muted);
   text-align: center;
   background: var(--color-drop);
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.dropZoneDragging,
+.dropZone:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px var(--color-focus);
+}
+
+.dropZoneReady {
+  align-content: center;
 }
 
 .uploadIcon {
@@ -227,6 +241,123 @@
   margin-top: var(--space-2);
   color: var(--color-muted);
   line-height: 1.6;
+}
+
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  margin: 0 0 12px;
+  padding: 6px 11px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xs);
+  color: var(--color-muted);
+  background: var(--color-control);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.statusPill::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status_imageFound {
+  border-color: var(--color-border-accent);
+  color: var(--color-accent);
+  background: rgba(11, 183, 173, 0.1);
+}
+
+.status_permissionDenied {
+  color: #b45127;
+  background: rgba(244, 189, 119, 0.16);
+}
+
+.status_noImage,
+.status_unsupported {
+  color: var(--color-sky-500);
+  background: rgba(79, 139, 216, 0.12);
+}
+
+.previewShell {
+  display: grid;
+  gap: var(--space-4);
+  width: min(100%, 420px);
+}
+
+.previewImage {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xs);
+  background:
+    linear-gradient(45deg, rgba(127, 127, 127, 0.1) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(127, 127, 127, 0.1) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(127, 127, 127, 0.1) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(127, 127, 127, 0.1) 75%);
+  background-position:
+    0 0,
+    0 10px,
+    10px -10px,
+    -10px 0;
+  background-size: 20px 20px;
+}
+
+.previewMeta {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.previewMeta span {
+  color: var(--color-accent);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.previewMeta strong,
+.previewMeta small {
+  overflow-wrap: anywhere;
+}
+
+.previewMeta strong {
+  color: var(--color-text);
+  font-size: 1rem;
+}
+
+.previewMeta small {
+  color: var(--color-muted);
+  font-size: 0.88rem;
+}
+
+.mobilePasteTarget {
+  width: min(100%, 420px);
+  height: 50px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xs);
+  color: var(--color-muted);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.94rem;
+  font-weight: 800;
+  line-height: 48px;
+  outline: none;
+  resize: none;
+  text-align: center;
+  caret-color: var(--color-accent);
+}
+
+.mobilePasteTarget:focus {
+  border-color: var(--color-accent);
+  color: var(--color-text);
+  box-shadow: 0 0 0 4px var(--color-focus);
 }
 
 .actions {
