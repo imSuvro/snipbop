@@ -1,11 +1,12 @@
 import type { SVGProps } from "react";
+import Link from "next/link";
 import { ClipboardImageTool } from "./clipboard-image-tool";
 import { ThemeToggle } from "./theme-toggle";
 import styles from "./page.module.css";
 
 const navLinks = [
   { label: "How it works", href: "#how-it-works" },
-  { label: "Clipboard help", href: "#clipboard-help" },
+  { label: "Clipboard help", href: "/clipboard-help" },
   { label: "Privacy", href: "#privacy" },
   { label: "Feedback", href: "mailto:feedback@snipbop.app" },
 ];
@@ -83,9 +84,15 @@ export default function Home() {
         <div className={styles.headerActions}>
           <nav className={styles.nav} aria-label="Main navigation">
             {navLinks.map((link) => (
-              <a href={link.href} key={link.label}>
-                {link.label}
-              </a>
+              link.href.startsWith("/") ? (
+                <Link href={link.href} key={link.label}>
+                  {link.label}
+                </Link>
+              ) : (
+                <a href={link.href} key={link.label}>
+                  {link.label}
+                </a>
+              )
             ))}
           </nav>
           <ThemeToggle />
@@ -159,6 +166,10 @@ export default function Home() {
         <p>
           Desktop browsers usually allow paste after keyboard input. Mobile
           browsers may ask for permission or require choosing an image instead.
+          {" "}
+          <Link className={styles.inlineLink} href="/clipboard-help">
+            Open the clipboard help guide.
+          </Link>
         </p>
       </section>
 

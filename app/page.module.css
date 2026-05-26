@@ -86,7 +86,8 @@
 }
 
 .nav a:hover,
-.footerLinks a:hover {
+.footerLinks a:hover,
+.inlineLink:hover {
   color: var(--color-accent);
   transform: translateY(-1px);
 }
@@ -803,6 +804,15 @@
 .footerBrand p {
   color: var(--color-muted);
   line-height: 1.65;
+}
+
+.inlineLink {
+  display: inline;
+  color: var(--color-accent);
+  font-weight: 900;
+  transition:
+    color 180ms ease,
+    transform 180ms ease;
 }
 
 .clipboardHelp {
