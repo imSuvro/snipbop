@@ -2,6 +2,7 @@ import type { SVGProps } from "react";
 import Link from "next/link";
 import { ClipboardImageTool } from "./clipboard-image-tool";
 import { getFeedbackMailto } from "./feedback";
+import { createFaqJsonLd, createPageMetadata } from "./seo";
 import { ThemeToggle } from "./theme-toggle";
 import styles from "./page.module.css";
 
@@ -53,6 +54,11 @@ const faqs = [
       "Clipboard access depends on browser support and device permissions, especially on mobile.",
   },
   {
+    question: "Can I save a screenshot from the clipboard?",
+    answer:
+      "Yes. Copy the screenshot image, paste it into SnipBop, then download it as PNG, JPG, or WebP when your browser supports image paste.",
+  },
+  {
     question: "Do I need to create an account?",
     answer:
       "No sign in is planned for the core image paste and export workflow.",
@@ -72,6 +78,20 @@ const footerLinks: NavigationLink[] = [
   { label: "Terms", href: "/terms", id: "terms" },
 ];
 
+const faqJsonLd = createFaqJsonLd(faqs);
+
+export const metadata = createPageMetadata({
+  title: "Save Clipboard Image as File",
+  description:
+    "SnipBop helps you save clipboard image as file: paste image and download PNG, JPG, or WebP, convert clipboard image to PNG, and save screenshot from clipboard.",
+  path: "/",
+  keywords: [
+    "paste screenshot and download",
+    "download clipboard image",
+    "screenshot to PNG",
+  ],
+});
+
 /**
  * Renders the static SnipBop main page shell for the first paste/export flow.
  */
@@ -85,6 +105,11 @@ export default function Home() {
 
   return (
     <main className={styles.page} id="top">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+
       <header className={styles.header}>
         <a className={styles.brand} href="#top" aria-label="SnipBop home">
           <LogoMark className={styles.logoMark} />
@@ -108,21 +133,22 @@ export default function Home() {
           <p className={styles.eyebrow}>Fast browser image export</p>
           <h1 id="home-title" className={styles.title}>
             <span className={styles.desktopTitle}>
-              <span className={styles.titleLine}>Paste an image.</span>
+              <span className={styles.titleLine}>Save clipboard</span>
               <span className={styles.titleLine}>
-                Export <span className={styles.accentText}>instantly.</span>
+                images as <span className={styles.accentText}>files.</span>
               </span>
             </span>
             <span className={styles.mobileTitle}>
-              <span className={styles.titleLine}>Add your image.</span>
+              <span className={styles.titleLine}>Save images</span>
               <span className={styles.titleLine}>
-                Export <span className={styles.accentText}>instantly.</span>
+                as <span className={styles.accentText}>files.</span>
               </span>
             </span>
           </h1>
           <p className={styles.lede}>
-            Save screenshots, copied images, and photos as clean downloadable
-            files right from your browser.
+            Paste image and download PNG, JPG, or WebP locally. Convert a
+            clipboard image to PNG or save a screenshot from clipboard without a
+            server trip.
           </p>
 
           <div className={styles.trustList} aria-label="SnipBop trust signals">

@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
 import { getFeedbackMailto } from "../feedback";
 import { LegalPageShell } from "../legal-page-shell";
+import { createPageMetadata } from "../seo";
 import styles from "../legal-page.module.css";
 
 const termHighlights = [
@@ -9,11 +9,17 @@ const termHighlights = [
   "No upload to SnipBop.",
 ];
 
-export const metadata: Metadata = {
-  title: "Terms | SnipBop",
+export const metadata = createPageMetadata({
+  title: "Terms",
   description:
-    "SnipBop MVP terms for local browser image export, supported use, and feedback.",
-};
+    "SnipBop terms for local browser image export, clipboard paste support, supported use, and browser-based PNG, JPG, and WebP downloads.",
+  path: "/terms",
+  keywords: [
+    "SnipBop terms",
+    "clipboard image terms",
+    "browser image export terms",
+  ],
+});
 
 export default function TermsPage() {
   const feedbackHref = getFeedbackMailto("SnipBop terms feedback");

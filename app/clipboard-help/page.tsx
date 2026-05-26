@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
 import type { SVGProps } from "react";
 import Link from "next/link";
+import { createFaqJsonLd, createPageMetadata } from "../seo";
 import { ThemeToggle } from "../theme-toggle";
 import { DeviceHelpTabs } from "./device-help-tabs";
 import styles from "./page.module.css";
@@ -42,23 +42,13 @@ const faqs = [
   },
 ];
 
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((faq) => ({
-    "@type": "Question",
-    name: faq.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: faq.answer,
-    },
-  })),
-};
+const faqJsonLd = createFaqJsonLd(faqs);
 
-export const metadata: Metadata = {
-  title: "Clipboard Help: Paste Images on Any Device | SnipBop",
+export const metadata = createPageMetadata({
+  title: "Clipboard Help for Pasting Images",
   description:
-    "Simple clipboard image paste instructions for Windows, Mac, Linux, ChromeOS, iPhone, iPad, and Android.",
+    "Learn how to paste image and download from SnipBop, convert clipboard image to PNG, and save screenshot from clipboard on desktop and mobile browsers.",
+  path: "/clipboard-help",
   keywords: [
     "clipboard help",
     "paste image from clipboard",
@@ -69,7 +59,7 @@ export const metadata: Metadata = {
     "Android paste image",
     "ChromeOS clipboard image",
   ],
-};
+});
 
 export default function ClipboardHelpPage() {
   return (
@@ -101,11 +91,11 @@ export default function ClipboardHelpPage() {
         <div className={styles.heroCopy}>
           <p className={styles.eyebrow}>Clipboard help</p>
           <h1 id="clipboard-help-title">
-            Paste images into SnipBop on any device.
+            Paste clipboard images into SnipBop.
           </h1>
           <p>
-            Choose your device for simple, text-only steps. When paste is not
-            available, SnipBop still lets you pick an image file and export it
+            Choose your device for simple, text-only steps. When paste is
+            blocked, SnipBop still lets you pick an image file and export it
             locally.
           </p>
         </div>
