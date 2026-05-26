@@ -7,11 +7,17 @@ type Theme = "light" | "dark";
 
 const STORAGE_KEY = "snipbop-theme";
 
+/**
+ * Reads the persisted SnipBop theme preference from local storage.
+ */
 function getStoredTheme(): Theme | null {
   const storedTheme = window.localStorage.getItem(STORAGE_KEY);
   return storedTheme === "light" || storedTheme === "dark" ? storedTheme : null;
 }
 
+/**
+ * Resolves the currently rendered system theme for first-load toggle state.
+ */
 function getSystemTheme(): Theme {
   const colorScheme = window.getComputedStyle(document.documentElement).colorScheme;
 
@@ -28,16 +34,25 @@ function getSystemTheme(): Theme {
     : "light";
 }
 
+/**
+ * Chooses the stored theme when available, otherwise the current system theme.
+ */
 function getActiveTheme(): Theme {
   return getStoredTheme() ?? getSystemTheme();
 }
 
+/**
+ * Applies and persists the selected theme on the document root.
+ */
 function applyTheme(theme: Theme) {
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
   window.localStorage.setItem(STORAGE_KEY, theme);
 }
 
+/**
+ * Renders the light/dark segmented toggle from the SnipBop header designs.
+ */
 export function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>("light");
 
@@ -95,6 +110,9 @@ export function ThemeToggle() {
   );
 }
 
+/**
+ * Draws the sun glyph for the light theme option.
+ */
 function SunIcon() {
   return (
     <svg viewBox="0 0 24 24" focusable="false">
@@ -111,6 +129,9 @@ function SunIcon() {
   );
 }
 
+/**
+ * Draws the moon glyph for the dark theme option.
+ */
 function MoonIcon() {
   return (
     <svg viewBox="0 0 24 24" focusable="false">

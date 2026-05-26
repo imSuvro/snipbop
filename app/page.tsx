@@ -65,6 +65,9 @@ const footerLinks = [
   { label: "Contact", href: "mailto:hello@snipbop.app" },
 ];
 
+/**
+ * Renders the static SnipBop main page shell for the first paste/export flow.
+ */
 export default function Home() {
   return (
     <main className={styles.page} id="top">
@@ -223,6 +226,9 @@ export default function Home() {
   );
 }
 
+/**
+ * Draws the SnipBop clipboard/image logo mark.
+ */
 function LogoMark(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 48 56" fill="none" {...props}>
@@ -234,6 +240,9 @@ function LogoMark(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+/**
+ * Draws the empty-state upload illustration used inside the drop zone.
+ */
 function ClipboardImageIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 120 120" fill="none" {...props}>
@@ -247,6 +256,9 @@ function ClipboardImageIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+/**
+ * Draws the image icon used by the choose-image action.
+ */
 function ImageIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" {...props}>
@@ -257,6 +269,9 @@ function ImageIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+/**
+ * Draws the clipboard icon used by the paste action.
+ */
 function ClipboardIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" {...props}>
@@ -266,6 +281,9 @@ function ClipboardIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+/**
+ * Draws the shield icon used by the browser-only trust badge.
+ */
 function ShieldIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" {...props}>
@@ -274,6 +292,9 @@ function ShieldIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+/**
+ * Draws the user icon used by the no-sign-in trust badge.
+ */
 function UserIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" {...props}>
@@ -283,6 +304,9 @@ function UserIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+/**
+ * Draws the cloud icon used by the no-upload-needed trust badge.
+ */
 function CloudIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" {...props}>
@@ -291,6 +315,9 @@ function CloudIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+/**
+ * Draws the lock icon used by the local-device privacy note.
+ */
 function LockIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="none" {...props}>

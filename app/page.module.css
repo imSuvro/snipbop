@@ -4,21 +4,6 @@
   background:
     linear-gradient(180deg, rgba(12, 28, 43, 0.98) 0%, var(--color-page) 46%, var(--color-page) 100%),
     var(--color-page);
-  overflow-x: hidden;
-}
-
-:global(html[data-theme="dark"]) .page {
-  background:
-    linear-gradient(180deg, rgba(12, 28, 43, 0.98) 0%, var(--color-page) 46%, var(--color-page) 100%),
-    var(--color-page);
-}
-
-@media (prefers-color-scheme: dark) {
-  :global(html:not([data-theme])) .page {
-    background:
-      linear-gradient(180deg, rgba(12, 28, 43, 0.98) 0%, var(--color-page) 46%, var(--color-page) 100%),
-      var(--color-page);
-  }
 }
 
 .header {
@@ -32,8 +17,15 @@
   width: 100%;
   padding: 22px max(var(--space-6), calc((100vw - 1180px) / 2));
   border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface);
-  backdrop-filter: blur(18px);
+  background: var(--color-surface-strong);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .header {
+    background: var(--color-surface);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+  }
 }
 
 .brand {
@@ -142,7 +134,12 @@
 
 .titleLine {
   display: block;
-  text-wrap: balance;
+}
+
+@supports (text-wrap: balance) {
+  .titleLine {
+    text-wrap: balance;
+  }
 }
 
 .accentText {
@@ -216,8 +213,8 @@
 .uploadIcon {
   width: 118px;
   height: 118px;
-  color: var(--color-text);
-  opacity: 0.72;
+  color: var(--color-muted);
+  opacity: 0.86;
 }
 
 .dropZone h2 {
