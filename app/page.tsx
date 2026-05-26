@@ -1,4 +1,5 @@
 import type { SVGProps } from "react";
+import { ClipboardImageTool } from "./clipboard-image-tool";
 import { ThemeToggle } from "./theme-toggle";
 import styles from "./page.module.css";
 
@@ -123,31 +124,7 @@ export default function Home() {
           </div>
         </div>
 
-        <section className={styles.tool} aria-labelledby="upload-title">
-          <div className={styles.dropZone}>
-            <ClipboardImageIcon className={styles.uploadIcon} aria-hidden="true" />
-            <div>
-              <h2 id="upload-title">Add your image</h2>
-              <p>Paste an image, choose a file, or drop one here.</p>
-            </div>
-
-            <div className={styles.actions}>
-              <button className={styles.primaryButton} type="button">
-                <ImageIcon aria-hidden="true" />
-                Choose Image
-              </button>
-              <button className={styles.secondaryButton} type="button">
-                <ClipboardIcon aria-hidden="true" />
-                Paste from Clipboard
-              </button>
-            </div>
-          </div>
-
-          <p className={styles.lockNote}>
-            <LockIcon aria-hidden="true" />
-            Your image stays on your device until you export.
-          </p>
-        </section>
+        <ClipboardImageTool />
       </section>
 
       <section
@@ -241,47 +218,6 @@ function LogoMark(props: SVGProps<SVGSVGElement>) {
 }
 
 /**
- * Draws the empty-state upload illustration used inside the drop zone.
- */
-function ClipboardImageIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 120 120" fill="none" {...props}>
-      <rect x="34" y="34" width="52" height="58" rx="10" stroke="currentColor" strokeWidth="8" />
-      <rect x="49" y="24" width="22" height="15" rx="5" fill="currentColor" />
-      <path d="M42 79L54 63L66 78L72 71L83 86H42Z" fill="var(--color-accent)" />
-      <circle cx="57" cy="53" r="5" fill="var(--color-accent)" />
-      <path d="M90 31L101 20" stroke="var(--color-accent)" strokeWidth="5" strokeLinecap="round" />
-      <path d="M95 42H108" stroke="var(--color-accent)" strokeWidth="5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-/**
- * Draws the image icon used by the choose-image action.
- */
-function ImageIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" {...props}>
-      <rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" strokeWidth="2" />
-      <path d="M5.5 17L10 12L13 15L15 13L19 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="15.5" cy="8.5" r="1.5" fill="currentColor" />
-    </svg>
-  );
-}
-
-/**
- * Draws the clipboard icon used by the paste action.
- */
-function ClipboardIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="M9 5H7.5A2.5 2.5 0 0 0 5 7.5V19a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7.5A2.5 2.5 0 0 0 16.5 5H15" stroke="currentColor" strokeWidth="2" />
-      <rect x="9" y="3" width="6" height="4" rx="2" stroke="currentColor" strokeWidth="2" />
-    </svg>
-  );
-}
-
-/**
  * Draws the shield icon used by the browser-only trust badge.
  */
 function ShieldIcon(props: SVGProps<SVGSVGElement>) {
@@ -315,14 +251,3 @@ function CloudIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-/**
- * Draws the lock icon used by the local-device privacy note.
- */
-function LockIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" {...props}>
-      <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="2" />
-      <path d="M8 10V8A4 4 0 0 1 16 8V10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
-}
