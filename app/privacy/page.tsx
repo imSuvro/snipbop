@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
 import { getFeedbackMailto } from "../feedback";
 import { LegalPageShell } from "../legal-page-shell";
+import { createPageMetadata } from "../seo";
 import styles from "../legal-page.module.css";
 
 const privacyHighlights = [
@@ -10,11 +10,17 @@ const privacyHighlights = [
   "SnipBop does not track filenames in MVP.",
 ];
 
-export const metadata: Metadata = {
-  title: "Privacy | SnipBop",
+export const metadata = createPageMetadata({
+  title: "Privacy",
   description:
-    "SnipBop privacy notes for the MVP: browser image processing, no account required, and no image upload to SnipBop.",
-};
+    "SnipBop privacy notes for local browser image export: no account required, no image upload to SnipBop, and clipboard images processed on your device.",
+  path: "/privacy",
+  keywords: [
+    "SnipBop privacy",
+    "local clipboard image privacy",
+    "browser image processing",
+  ],
+});
 
 export default function PrivacyPage() {
   const feedbackHref = getFeedbackMailto("SnipBop privacy feedback");

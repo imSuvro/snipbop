@@ -40,3 +40,7 @@ Open http://localhost:3000.
 This initial setup intentionally has no auth layer and no backend service.
 Feedback links use `NEXT_PUBLIC_SNIPBOP_FEEDBACK_EMAIL` when set and fall back
 to `suvro.samajder@gmail.com`.
+
+SEO metadata uses `NEXT_PUBLIC_SNIPBOP_SITE_URL`, `SNIPBOP_SITE_URL`,
+`NEXT_PUBLIC_SITE_URL`, `VERCEL_PROJECT_PRODUCTION_URL`, or `VERCEL_URL` when
+set. Local builds fall back to `http://localhost:3000` for canonical metadata.
