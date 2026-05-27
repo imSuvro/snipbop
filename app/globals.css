@@ -141,8 +141,22 @@ a {
 }
 
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
+}
+
+:where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+@media (prefers-contrast: more) {
+  :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+    outline-color: var(--color-accent);
+    outline-width: 4px;
+  }
 }
 
 ::selection {
