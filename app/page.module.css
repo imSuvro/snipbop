@@ -92,6 +92,13 @@
   transform: translateY(-1px);
 }
 
+.brand:focus-visible,
+.nav a:focus-visible,
+.footerLinks a:focus-visible,
+.inlineLink:focus-visible {
+  border-radius: var(--radius-xs);
+}
+
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1fr);
@@ -527,6 +534,17 @@
   transform: translateY(-1px);
 }
 
+.formatButton:focus-visible,
+.qualityButton:focus-visible,
+.ghostButton:focus-visible,
+.primaryButton:focus-visible,
+.secondaryButton:focus-visible {
+  border-color: var(--color-accent);
+  box-shadow:
+    var(--shadow-control),
+    0 0 0 5px var(--color-focus);
+}
+
 .formatButton[data-selected="true"],
 .qualityButton[data-selected="true"] {
   border-color: var(--color-accent);
@@ -597,6 +615,11 @@
   box-shadow: inset 0 0 0 3px var(--color-focus);
 }
 
+.fileNameControl:has(input:focus-visible) {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 4px var(--color-focus);
+}
+
 .fileNameControl > span {
   align-self: stretch;
   display: inline-flex;
@@ -610,9 +633,11 @@
 .downloadHint {
   display: inline-flex;
   align-items: center;
+  min-width: 0;
   gap: 10px;
   color: var(--color-muted);
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .downloadHint svg {
@@ -643,25 +668,42 @@
 
 .mobilePasteTarget {
   width: min(100%, 420px);
-  height: 50px;
-  padding: 0 14px;
-  border: 1px solid var(--color-border);
+  min-height: 56px;
+  padding: 16px 18px;
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-xs);
-  color: var(--color-muted);
-  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent),
+    var(--color-control);
   font-size: 0.94rem;
   font-weight: 800;
-  line-height: 48px;
+  line-height: 1.35;
   outline: none;
   resize: none;
   text-align: center;
   caret-color: var(--color-accent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.mobilePasteTarget:focus {
+.mobilePasteTarget::placeholder {
+  color: var(--color-muted);
+  opacity: 1;
+}
+
+.mobilePasteTarget:focus-visible {
   border-color: var(--color-accent);
   color: var(--color-text);
   box-shadow: 0 0 0 4px var(--color-focus);
+}
+
+.pasteTargetHelp {
+  width: min(100%, 420px);
+  margin-top: -8px;
+  color: var(--color-subtle);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  text-align: center;
 }
 
 .actions {
@@ -734,10 +776,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 10px;
+  min-width: 0;
   color: var(--color-muted);
   font-size: 0.95rem;
   line-height: 1.5;
+  text-align: center;
 }
 
 .lockNote svg {
@@ -921,24 +966,27 @@
 
   .headerActions {
     width: 100%;
-    align-items: flex-start;
+    align-items: stretch;
     flex-direction: column-reverse;
     gap: var(--space-4);
   }
 
   .nav {
-    width: 100%;
-    justify-content: flex-start;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(100%, 420px);
+    justify-content: stretch;
     gap: 10px;
     padding-bottom: 2px;
-    flex-wrap: wrap;
   }
 
   .nav a {
-    flex: 0 0 auto;
+    min-width: 0;
     padding: var(--space-2) 10px;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-xs);
+    text-align: center;
+    overflow-wrap: anywhere;
   }
 
   .hero {
@@ -952,12 +1000,22 @@
   }
 
   .heroCopy {
+    width: 100%;
     text-align: center;
     align-items: center;
   }
 
   .title {
+    width: 100%;
+    max-width: 100%;
     font-size: 3rem;
+    overflow-wrap: break-word;
+  }
+
+  .lede {
+    width: 100%;
+    max-width: 100%;
+    overflow-wrap: break-word;
   }
 
   .trustList,

@@ -4,6 +4,7 @@ import {
   type ChangeEvent,
   type ClipboardEvent as ReactClipboardEvent,
   type DragEvent,
+  type KeyboardEvent as ReactKeyboardEvent,
   type SVGProps,
   useCallback,
   useEffect,
@@ -357,8 +358,18 @@ export function ClipboardImageTool() {
     showInputState("idle");
   };
 
-  const handleExport = async () => {
-    if (!preview) {
+  const selectOutputFormat = useCallback((format: OutputFormat) => {
+    setOutputFormat(format);
+    setDownloadedFileName(null);
+  }, []);
+
+  const selectQualityPreset = useCallback((preset: QualityPreset) => {
+    setQualityPreset(preset);
+    setDownloadedFileName(null);
+  }, []);
+
+  const handleExport = useCallback(async () => {
+    if (!preview || isExporting) {
       return;
     }
 
@@ -380,7 +391,7 @@ export function ClipboardImageTool() {
     } finally {
       setIsExporting(false);
     }
-  };
+  }, [fileName, isExporting, outputFormat, preview, qualityPreset]);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     void handleFiles(event.target.files);
@@ -394,9 +405,74 @@ export function ClipboardImageTool() {
     void handleFiles(event.dataTransfer.files);
   };
 
+  useEffect(() => {
+    const handleWindowKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented) {
+        return;
+      }
+
+      if (event.key === "Escape") {
+        if (isDragging) {
+          event.preventDefault();
+          setIsDragging(false);
+          setLiveMessage("Drag state dismissed.");
+          return;
+        }
+
+        if (downloadedFileName) {
+          event.preventDefault();
+          setDownloadedFileName(null);
+          setLiveMessage("Download confirmation dismissed.");
+          return;
+        }
+
+        if (!preview && clipboardState !== "idle") {
+          event.preventDefault();
+          showInputState("idle");
+        }
+
+        return;
+      }
+
+      if (
+        event.key !== "Enter" ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.shiftKey ||
+        !preview ||
+        !isSafeExportKeyTarget(event.target)
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      void handleExport();
+    };
+
+    window.addEventListener("keydown", handleWindowKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleWindowKeyDown);
+    };
+  }, [
+    clipboardState,
+    downloadedFileName,
+    handleExport,
+    isDragging,
+    preview,
+    showInputState,
+  ]);
+
   const activeCopy = stateCopy[clipboardState];
   const statusTone = styles[`status_${clipboardState}`] ?? "";
   const showQualityPresets = outputFormat === "jpg" || outputFormat === "webp";
+  const liveRegionPoliteness =
+    clipboardState !== "idle" && clipboardState !== "imageFound"
+      ? "assertive"
+      : liveMessage.startsWith("Export failed")
+        ? "assertive"
+        : "polite";
 
   return (
     <section
@@ -421,7 +497,12 @@ export function ClipboardImageTool() {
       }}
       onDrop={handleDrop}
     >
-      <p className={styles.srOnly} role="status" aria-live="polite" aria-atomic="true">
+      <p
+        className={styles.srOnly}
+        role="status"
+        aria-live={liveRegionPoliteness}
+        aria-atomic="true"
+      >
         {liveMessage}
       </p>
 
@@ -474,6 +555,7 @@ export function ClipboardImageTool() {
                 className={styles.secondaryButton}
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
+                aria-label="Replace the current image"
               >
                 <ImageIcon aria-hidden="true" />
                 Replace image
@@ -482,6 +564,7 @@ export function ClipboardImageTool() {
                 className={styles.ghostButton}
                 type="button"
                 onClick={handleStartOver}
+                aria-label="Start over without the current image"
               >
                 <RefreshIcon aria-hidden="true" />
                 Start over
@@ -509,18 +592,26 @@ export function ClipboardImageTool() {
             <fieldset className={styles.formatField}>
               <legend>Output format</legend>
               <div className={styles.formatOptions} role="radiogroup" aria-label="Output format">
-                {outputFormats.map((format) => (
+                {outputFormats.map((format, index) => (
                   <button
                     className={styles.formatButton}
                     data-selected={outputFormat === format.value}
                     type="button"
                     role="radio"
                     aria-checked={outputFormat === format.value}
+                    tabIndex={outputFormat === format.value ? 0 : -1}
                     key={format.value}
-                    onClick={() => {
-                      setOutputFormat(format.value);
-                      setDownloadedFileName(null);
-                    }}
+                    onClick={() => selectOutputFormat(format.value)}
+                    onKeyDown={(event) =>
+                      handleRadioButtonKeyDown(
+                        event,
+                        index,
+                        outputFormats.length,
+                        () => selectOutputFormat(format.value),
+                        (nextIndex) =>
+                          selectOutputFormat(outputFormats[nextIndex].value),
+                      )
+                    }
                   >
                     {format.label}
                     {outputFormat === format.value ? <CheckSmallIcon aria-hidden="true" /> : null}
@@ -537,18 +628,26 @@ export function ClipboardImageTool() {
                   role="radiogroup"
                   aria-label={`${outputFormat.toUpperCase()} quality preset`}
                 >
-                  {qualityPresets.map((preset) => (
+                  {qualityPresets.map((preset, index) => (
                     <button
                       className={styles.qualityButton}
                       data-selected={qualityPreset === preset.value}
                       type="button"
                       role="radio"
                       aria-checked={qualityPreset === preset.value}
+                      tabIndex={qualityPreset === preset.value ? 0 : -1}
                       key={preset.value}
-                      onClick={() => {
-                        setQualityPreset(preset.value);
-                        setDownloadedFileName(null);
-                      }}
+                      onClick={() => selectQualityPreset(preset.value)}
+                      onKeyDown={(event) =>
+                        handleRadioButtonKeyDown(
+                          event,
+                          index,
+                          qualityPresets.length,
+                          () => selectQualityPreset(preset.value),
+                          (nextIndex) =>
+                            selectQualityPreset(qualityPresets[nextIndex].value),
+                        )
+                      }
                     >
                       <span>{preset.label}</span>
                       <span>{Math.round(preset.quality * 100)}%</span>
@@ -610,20 +709,30 @@ export function ClipboardImageTool() {
 
           <textarea
             className={styles.mobilePasteTarget}
-            aria-label="Tap here, then paste an image"
-            placeholder="Tap here, then paste"
+            aria-label="Paste image target"
+            aria-describedby="mobile-paste-help"
+            aria-keyshortcuts="Control+V Meta+V"
+            autoCapitalize="none"
+            autoComplete="off"
+            enterKeyHint="done"
+            placeholder="Paste image here"
             rows={1}
+            spellCheck={false}
             onPaste={handlePaste}
             onInput={(event) => {
               event.currentTarget.value = "";
             }}
           />
+          <p id="mobile-paste-help" className={styles.pasteTargetHelp}>
+            Tap or click the field, then use your browser paste menu.
+          </p>
 
           <div className={styles.actions}>
             <button
               className={styles.primaryButton}
               type="button"
               onClick={() => fileInputRef.current?.click()}
+              aria-label="Choose an image file"
             >
               <ImageIcon aria-hidden="true" />
               Choose Image
@@ -632,6 +741,7 @@ export function ClipboardImageTool() {
               className={styles.secondaryButton}
               type="button"
               onClick={handleClipboardRead}
+              aria-label="Paste image from clipboard"
             >
               <ClipboardIcon aria-hidden="true" />
               Paste from Clipboard
@@ -645,6 +755,7 @@ export function ClipboardImageTool() {
         hidden
         type="file"
         accept="image/*,.heic,.heif"
+        aria-label="Choose image file"
         onChange={handleFileChange}
       />
 
@@ -712,6 +823,74 @@ function isEditablePasteTarget(target: EventTarget | null) {
       target instanceof HTMLTextAreaElement ||
       target instanceof HTMLSelectElement)
   );
+}
+
+function isSafeExportKeyTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement) || target === document.body) {
+    return true;
+  }
+
+  if (isEditablePasteTarget(target)) {
+    return false;
+  }
+
+  return !target.closest(
+    'a, button, summary, [role="button"], [role="radio"], [role="tab"], [role="menuitem"]',
+  );
+}
+
+function handleRadioButtonKeyDown(
+  event: ReactKeyboardEvent<HTMLButtonElement>,
+  index: number,
+  optionCount: number,
+  selectCurrent: () => void,
+  selectIndex: (index: number) => void,
+) {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    selectCurrent();
+    return;
+  }
+
+  const nextIndex = getRadioNavigationIndex(event.key, index, optionCount);
+
+  if (nextIndex === null) {
+    return;
+  }
+
+  event.preventDefault();
+  selectIndex(nextIndex);
+
+  const radioButtons =
+    event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
+      '[role="radio"]',
+    );
+
+  radioButtons?.[nextIndex]?.focus();
+}
+
+function getRadioNavigationIndex(key: string, index: number, optionCount: number) {
+  if (optionCount <= 0) {
+    return null;
+  }
+
+  if (key === "ArrowRight" || key === "ArrowDown") {
+    return (index + 1) % optionCount;
+  }
+
+  if (key === "ArrowLeft" || key === "ArrowUp") {
+    return (index - 1 + optionCount) % optionCount;
+  }
+
+  if (key === "Home") {
+    return 0;
+  }
+
+  if (key === "End") {
+    return optionCount - 1;
+  }
+
+  return null;
 }
 
 function getSafeDownloadName(name: string) {
