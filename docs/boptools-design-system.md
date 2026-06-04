@@ -12,7 +12,7 @@ Boptools products are small, serious tools with a playful pulse. The design goal
 
 ## Visual Direction
 
-Boptools uses an uncommon "desk instrument" style: warm ink, pale mineral surfaces, acid highlight, coral warnings, and blue utility accents. The palette should feel handmade but precise.
+Boptools uses an uncommon "desk instrument" style: ink type, paper surfaces, acid highlight, leaf utility accents, and coral warnings. The palette should feel handmade but precise.
 
 - Backgrounds use quiet texture, hairline grids, and soft radial light.
 - Panels are few and purposeful. Avoid stacking cards inside cards.
