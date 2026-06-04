@@ -2,8 +2,10 @@
   min-height: 100vh;
   color: var(--color-text);
   background:
-    linear-gradient(180deg, rgba(12, 28, 43, 0.98) 0%, var(--color-page) 36%),
-    var(--color-page);
+    linear-gradient(rgba(33, 29, 24, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(33, 29, 24, 0.04) 1px, transparent 1px),
+    linear-gradient(180deg, var(--color-paper-50) 0%, var(--color-page) 58%, #edf5e5 100%);
+  background-size: 44px 44px, 44px 44px, auto;
 }
 
 .header {
@@ -15,16 +17,15 @@
   justify-content: space-between;
   gap: var(--space-7);
   width: 100%;
-  padding: 22px max(var(--space-6), calc((100vw - 1180px) / 2));
+  padding: 18px max(var(--space-6), calc((100vw - 1240px) / 2));
   border-bottom: 1px solid var(--color-border);
-  background: var(--color-surface-strong);
+  background: rgba(251, 255, 247, 0.82);
 }
 
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .header {
-    background: var(--color-surface);
-    -webkit-backdrop-filter: blur(18px);
-    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    backdrop-filter: blur(18px) saturate(1.2);
   }
 }
 
@@ -34,30 +35,32 @@
   gap: 10px;
   min-width: max-content;
   color: var(--color-text);
-  font-weight: 800;
+  font-weight: 900;
   transition:
     color 180ms ease,
     transform 180ms ease;
 }
 
 .brand:hover {
-  color: var(--color-accent);
+  color: var(--color-accent-strong);
+  transform: translateY(-1px);
 }
 
 .logoMark {
-  width: 38px;
-  height: 44px;
+  width: 36px;
+  height: 42px;
   color: var(--color-text);
-  filter: drop-shadow(0 8px 16px rgba(11, 183, 173, 0.18));
+  filter: drop-shadow(6px 7px 0 rgba(217, 255, 67, 0.68));
 }
 
 .wordmark {
-  font-size: 1.55rem;
+  font-family: var(--font-display);
+  font-size: 1.52rem;
   line-height: 1;
 }
 
 .wordmark span {
-  color: var(--color-accent);
+  color: var(--color-accent-strong);
 }
 
 .headerActions {
@@ -73,14 +76,17 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: var(--space-6);
+  gap: var(--space-5);
   color: var(--color-muted);
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 0.92rem;
+  font-weight: 850;
 }
 
 .topNav a,
 .footer a {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
   transition:
     color 180ms ease,
     transform 180ms ease;
@@ -88,14 +94,14 @@
 
 .topNav a:hover,
 .footer a:hover {
-  color: var(--color-accent);
+  color: var(--color-text);
   transform: translateY(-1px);
 }
 
 .hero,
 .content,
 .footer {
-  width: min(100%, 1180px);
+  width: min(100%, 1240px);
   margin: 0 auto;
   padding-inline: var(--space-6);
 }
@@ -103,31 +109,33 @@
 .hero {
   display: grid;
   gap: var(--space-4);
-  padding-top: 74px;
+  padding-top: 68px;
   padding-bottom: 38px;
 }
 
 .eyebrow {
-  color: var(--color-accent);
+  color: var(--color-accent-strong);
   font-size: 0.78rem;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0;
   text-transform: uppercase;
 }
 
 .hero h1 {
-  max-width: 780px;
+  max-width: 840px;
   color: var(--color-text);
-  font-size: 4.05rem;
-  line-height: 1.06;
+  font-family: var(--font-display);
+  font-size: clamp(3.35rem, 6vw, 6.2rem);
+  line-height: 0.94;
   letter-spacing: 0;
 }
 
 .hero p:last-child {
-  max-width: 720px;
+  max-width: 740px;
   color: var(--color-muted);
-  font-size: 1.12rem;
+  font-size: 1.08rem;
   line-height: 1.65;
+  text-wrap: balance;
 }
 
 .content {
@@ -143,12 +151,14 @@
   display: grid;
   gap: var(--space-4);
   padding: 22px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xs);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
   background:
-    linear-gradient(135deg, rgba(11, 183, 173, 0.08), transparent 58%),
+    linear-gradient(90deg, var(--color-acid-500) 0 46%, var(--color-coral-500) 46% 60%, var(--color-blue-500) 60% 70%, transparent 70%),
     var(--color-surface);
-  box-shadow: var(--shadow-card);
+  background-size: 100% 8px, auto;
+  background-repeat: no-repeat;
+  box-shadow: 8px 8px 0 rgba(22, 19, 15, 0.11);
 }
 
 .summaryPanel h2,
@@ -158,7 +168,9 @@
 }
 
 .summaryPanel h2 {
-  font-size: 1.25rem;
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  line-height: 1.05;
 }
 
 .summaryPanel ul,
@@ -177,7 +189,7 @@
 
 .summaryPanel li::marker,
 .legalCard li::marker {
-  color: var(--color-accent);
+  color: var(--color-utility);
 }
 
 .legalSections {
@@ -192,16 +204,17 @@
   padding: var(--space-6);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xs);
-  background: var(--color-control);
+  background: rgba(251, 255, 247, 0.58);
+  box-shadow: 5px 5px 0 rgba(22, 19, 15, 0.06);
 }
 
 .legalCard h2 {
-  font-size: 1.45rem;
+  font-size: 1.35rem;
   line-height: 1.2;
 }
 
 .legalCard a {
-  color: var(--color-accent);
+  color: var(--color-accent-strong);
   font-weight: 900;
 }
 
@@ -217,7 +230,7 @@
 
 .footer p {
   color: var(--color-muted);
-  font-weight: 800;
+  font-weight: 900;
 }
 
 .brand:focus-visible,
@@ -225,20 +238,33 @@
 .footer a:focus-visible,
 .legalCard a:focus-visible {
   outline: 0;
+  border-radius: var(--radius-xs);
   box-shadow: 0 0 0 4px var(--color-focus);
 }
 
-:global(html[data-theme="light"]) .page {
+:global(html[data-theme="dark"]) .page {
   background:
-    linear-gradient(180deg, #fbfcf8 0%, var(--color-page) 36%),
-    var(--color-page);
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(180deg, #1a1611 0%, var(--color-page) 58%, #15120f 100%);
+  background-size: 44px 44px, 44px 44px, auto;
 }
 
-@media (prefers-color-scheme: light) {
+:global(html[data-theme="dark"]) .header {
+  background: rgba(29, 25, 20, 0.82);
+}
+
+@media (prefers-color-scheme: dark) {
   :global(html:not([data-theme])) .page {
     background:
-      linear-gradient(180deg, #fbfcf8 0%, var(--color-page) 36%),
-      var(--color-page);
+      linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(180deg, #1a1611 0%, var(--color-page) 58%, #15120f 100%);
+    background-size: 44px 44px, 44px 44px, auto;
+  }
+
+  :global(html:not([data-theme])) .header {
+    background: rgba(29, 25, 20, 0.82);
   }
 }
 
@@ -247,7 +273,7 @@
     position: static;
     align-items: flex-start;
     flex-direction: column;
-    gap: 18px;
+    gap: 16px;
   }
 
   .headerActions {
@@ -283,7 +309,22 @@
 
 @media (max-width: 680px) {
   .header {
+    position: relative;
     padding: 18px;
+  }
+
+  .headerActions {
+    display: block;
+  }
+
+  .headerActions > button {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+  }
+
+  .topNav {
+    margin-top: 14px;
   }
 
   .wordmark {
@@ -302,12 +343,12 @@
   }
 
   .hero {
-    padding-top: 42px;
+    padding-top: 40px;
     padding-bottom: 30px;
   }
 
   .hero h1 {
-    font-size: 2.42rem;
+    font-size: 3rem;
   }
 
   .legalCard {
@@ -324,4 +365,3 @@
     flex-wrap: wrap;
   }
 }
-

@@ -14,14 +14,14 @@ type NavigationLink = {
 
 const navLinks: NavigationLink[] = [
   { label: "How it works", href: "#how-it-works" },
-  { label: "Clipboard help", href: "/clipboard-help" },
+  { label: "Help", href: "/clipboard-help" },
   { label: "Privacy", href: "/privacy" },
 ];
 
 const trustBadges = [
-  { label: "Runs in your browser", icon: ShieldIcon },
-  { label: "No sign in", icon: UserIcon },
-  { label: "No upload needed", icon: CloudIcon },
+  { label: "Browser-only", icon: ShieldIcon },
+  { label: "No account", icon: UserIcon },
+  { label: "No upload", icon: CloudIcon },
 ];
 
 const steps = [
@@ -130,7 +130,7 @@ export default function Home() {
 
       <section className={styles.hero} aria-labelledby="home-title">
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>Fast browser image export</p>
+          <p className={styles.eyebrow}>Boptools / SnipBop</p>
           <h1 id="home-title" className={styles.title}>
             <span className={styles.desktopTitle}>
               <span className={styles.titleLine}>Save clipboard</span>
@@ -139,17 +139,21 @@ export default function Home() {
               </span>
             </span>
             <span className={styles.mobileTitle}>
-              <span className={styles.titleLine}>Save images</span>
+              <span className={styles.titleLine}>Save clipboard</span>
               <span className={styles.titleLine}>
-                as <span className={styles.accentText}>files.</span>
+                images as <span className={styles.accentText}>files.</span>
               </span>
             </span>
           </h1>
           <p className={styles.lede}>
-            Paste image and download PNG, JPG, or WebP locally. Convert a
-            clipboard image to PNG or save a screenshot from clipboard without a
-            server trip.
+            Paste image and download PNG, JPG, or WebP locally. A tiny browser
+            workbench for screenshots, copied images, and quick file saves.
           </p>
+
+          <div className={styles.heroLinks}>
+            <a href="#how-it-works">How it works</a>
+            <Link href="/clipboard-help">Clipboard help</Link>
+          </div>
 
           <div className={styles.trustList} aria-label="SnipBop trust signals">
             {trustBadges.map(({ label, icon: Icon }) => (
