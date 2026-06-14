@@ -295,7 +295,7 @@
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-md);
   background:
-    linear-gradient(90deg, var(--color-acid-500) 0 18%, var(--color-coral-500) 18% 28%, var(--color-blue-500) 28% 36%, transparent 36%),
+    linear-gradient(90deg, var(--color-acid-500) 0 42%, var(--color-coral-500) 42% 68%, var(--color-blue-500) 68% 100%),
     var(--color-surface);
   background-size: 100% 8px, auto;
   background-repeat: no-repeat;
@@ -405,6 +405,12 @@
   margin-right: 8px;
   border-radius: 50%;
   background: currentColor;
+}
+
+.status_idle {
+  border-color: rgba(26, 175, 120, 0.28);
+  color: var(--color-accent-strong);
+  background: rgba(26, 175, 120, 0.1);
 }
 
 .status_imageFound {
@@ -1068,6 +1074,25 @@
   background-size: 44px 44px, 44px 44px, auto;
 }
 
+:global(html[data-theme="dark"]) .dropZone {
+  border-color: rgba(217, 255, 67, 0.34);
+  background:
+    linear-gradient(rgba(217, 255, 67, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(217, 255, 67, 0.03) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(251, 255, 247, 0.06), rgba(251, 255, 247, 0.025));
+  background-position:
+    0 0,
+    0 0,
+    0 0;
+  background-size: 24px 24px, 24px 24px, auto;
+}
+
+:global(html[data-theme="dark"]) .status_idle {
+  border-color: rgba(217, 255, 67, 0.42);
+  color: var(--color-acid-500);
+  background: rgba(217, 255, 67, 0.12);
+}
+
 :global(html[data-theme="dark"]) .accentText,
 :global(html[data-theme="dark"]) .primaryButton,
 :global(html[data-theme="dark"]) .readyIcon,
@@ -1083,6 +1108,25 @@
       linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
       linear-gradient(180deg, #1a1611 0%, var(--color-page) 58%, #15120f 100%);
     background-size: 44px 44px, 44px 44px, auto;
+  }
+
+  :global(html:not([data-theme])) .dropZone {
+    border-color: rgba(217, 255, 67, 0.34);
+    background:
+      linear-gradient(rgba(217, 255, 67, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(217, 255, 67, 0.03) 1px, transparent 1px),
+      linear-gradient(180deg, rgba(251, 255, 247, 0.06), rgba(251, 255, 247, 0.025));
+    background-position:
+      0 0,
+      0 0,
+      0 0;
+    background-size: 24px 24px, 24px 24px, auto;
+  }
+
+  :global(html:not([data-theme])) .status_idle {
+    border-color: rgba(217, 255, 67, 0.42);
+    color: var(--color-acid-500);
+    background: rgba(217, 255, 67, 0.12);
   }
 
   :global(html:not([data-theme])) .accentText,
